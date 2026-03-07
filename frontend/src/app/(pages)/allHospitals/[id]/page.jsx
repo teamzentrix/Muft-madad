@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, useParams } from 'next/navigation';
-import { Phone, MapPin, Clock, Users, Award, Stethoscope, Star, AlertCircle, RefreshCw, ChevronRight, CheckCircle } from 'lucide-react';
+import { Phone, MapPin, Clock, Users, Award, Stethoscope, Star, AlertCircle, RefreshCw, ChevronRight, CheckCircle, Images, X, ChevronLeft, ZoomIn } from 'lucide-react';
 import axios from 'axios';
 import Navbar from '@/components/Navbar';
 
@@ -11,11 +11,129 @@ const Skeleton = ({ className }) => (
   <div className={`animate-pulse bg-gray-200 rounded ${className}`} />
 );
 
+/* ─── Gallery Tab ───────────────────────────────────────────────────────── */
+const GalleryTab = ({ images }) => {
+  const [lightboxIndex, setLightboxIndex] = useState(null);
+
+  const openLightbox = (i) => setLightboxIndex(i);
+  const closeLightbox = () => setLightboxIndex(null);
+  const prev = () => setLightboxIndex(i => (i - 1 + images.length) % images.length);
+  const next = () => setLightboxIndex(i => (i + 1) % images.length);
+
+  // close on Escape, arrow keys to navigate
+  useEffect(() => {
+    const handler = (e) => {
+      if (lightboxIndex === null) return;
+      if (e.key === 'Escape') setLightboxIndex(null);
+      if (e.key === 'ArrowLeft') setLightboxIndex(i => (i - 1 + images.length) % images.length);
+      if (e.key === 'ArrowRight') setLightboxIndex(i => (i + 1) % images.length);
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [lightboxIndex, images.length]);
+
+  if (!images || images.length === 0) return (
+    <div className="text-center py-16">
+      <Images className="w-12 h-12 text-gray-200 mx-auto mb-3" />
+      <p className="text-gray-400 text-sm italic">No gallery images available.</p>
+    </div>
+  );
+
+  return (
+    <div>
+      <h3 className="text-xl font-semibold text-gray-900 mb-6 flex items-center gap-2">
+        <Images className="w-5 h-5 text-indigo-600" />
+        Gallery
+        <span className="ml-2 text-sm font-normal text-gray-400">({images.length} photos)</span>
+      </h3>
+
+      {/* Grid */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+        {images.map((img, i) => (
+          <div
+            key={i}
+            onClick={() => openLightbox(i)}
+            className="relative group aspect-square rounded-xl overflow-hidden border-2 border-gray-100
+                       hover:border-indigo-300 cursor-pointer hover:shadow-lg transition-all duration-300"
+          >
+            <img
+              src={img}
+              alt={`Hospital gallery ${i + 1}`}
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            />
+            {/* hover overlay */}
+            <div className="absolute inset-0 bg-indigo-900/0 group-hover:bg-indigo-900/30
+                            flex items-center justify-center transition-all duration-300">
+              <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300
+                              bg-white/90 rounded-full p-2">
+                <ZoomIn className="w-5 h-5 text-indigo-600" />
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Lightbox */}
+      {lightboxIndex !== null && (
+        <div
+          className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4"
+          onClick={closeLightbox}
+        >
+          {/* Close */}
+          <button
+            onClick={closeLightbox}
+            className="absolute top-4 right-4 bg-white/10 hover:bg-white/20 text-white
+                       rounded-full p-2 transition-colors z-10"
+          >
+            <X className="w-6 h-6" />
+          </button>
+
+          {/* Counter */}
+          <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-white/10 text-white
+                          text-sm font-medium px-4 py-1.5 rounded-full">
+            {lightboxIndex + 1} / {images.length}
+          </div>
+
+          {/* Prev */}
+          {images.length > 1 && (
+            <button
+              onClick={(e) => { e.stopPropagation(); prev(); }}
+              className="absolute left-4 bg-white/10 hover:bg-white/20 text-white
+                         rounded-full p-3 transition-colors z-10"
+            >
+              <ChevronLeft className="w-6 h-6" />
+            </button>
+          )}
+
+          {/* Image */}
+          <img
+            src={images[lightboxIndex]}
+            alt={`Gallery ${lightboxIndex + 1}`}
+            onClick={(e) => e.stopPropagation()}
+            className="max-w-full max-h-[85vh] object-contain rounded-lg shadow-2xl"
+          />
+
+          {/* Next */}
+          {images.length > 1 && (
+            <button
+              onClick={(e) => { e.stopPropagation(); next(); }}
+              className="absolute right-4 bg-white/10 hover:bg-white/20 text-white
+                         rounded-full p-3 transition-colors z-10"
+            >
+              <ChevronRight className="w-6 h-6" />
+            </button>
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
+
 const SkeletonPage = () => (
-  <div className="min-h-screen bg-gradient-to-br from-gray-50 to-indigo-50 p-4 md:p-8">
+  <div className="min-h-screen bg-linear-to-br from-gray-50 to-indigo-50 p-4 md:p-8">
     <div className="max-w-6xl mx-auto">
       <div className="bg-white rounded-2xl shadow-xl overflow-hidden mb-6">
-        <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-700 p-8 md:p-10">
+        <div className="bg-linear-to-r from-indigo-600 via-purple-600 to-indigo-700 p-8 md:p-10">
           <div className="flex flex-wrap gap-2 mb-4">
             {[80, 110, 100].map((w, i) => (
               <div key={i} style={{ width: w }} className="h-7 rounded-full bg-white/20 animate-pulse" />
@@ -45,7 +163,7 @@ const SkeletonPage = () => (
 
 /* ─── No-ID State ───────────────────────────────────────────────────────── */
 const NoIdState = () => (
-  <div className="min-h-screen bg-gradient-to-br from-gray-50 to-indigo-50 flex items-center justify-center p-4">
+  <div className="min-h-screen bg-linear-to-br from-gray-50 to-indigo-50 flex items-center justify-center p-4">
     <div className="bg-white rounded-2xl shadow-xl p-10 max-w-md w-full text-center space-y-5">
       <div className="w-16 h-16 rounded-full bg-indigo-50 border border-indigo-100 flex items-center justify-center mx-auto">
         <Stethoscope className="w-8 h-8 text-indigo-400" />
@@ -84,7 +202,7 @@ const OverviewTab = ({ hospital }) => (
           <Clock className="w-5 h-5 text-indigo-600" />
           Timings
         </h3>
-        <div className="bg-gradient-to-r from-indigo-50 to-purple-50 p-4 rounded-lg border border-indigo-100">
+        <div className="bg-linear-to-r from-indigo-50 to-purple-50 p-4 rounded-lg border border-indigo-100">
           {hospital.timing_display && (
             <p className="text-lg font-medium text-gray-900">{hospital.timing_display}</p>
           )}
@@ -115,8 +233,8 @@ const OverviewTab = ({ hospital }) => (
           { label: 'Rating', value: hospital.rating > 0 ? `${parseFloat(hospital.rating).toFixed(1)}★` : null, color: 'yellow' },
         ].filter(s => s.value).map((stat, i) => (
           <div key={i} style={{
-            background: `var(--tw-gradient-from, #fff)`,
-          }} className={`bg-gradient-to-br from-${stat.color}-50 to-${stat.color}-100 p-6 rounded-xl border border-${stat.color}-200 hover:shadow-lg transition-shadow text-center`}>
+            background: `var(--tw-linear-from, #fff)`,
+          }} className={`bg-linear-to-br from-${stat.color}-50 to-${stat.color}-100 p-6 rounded-xl border border-${stat.color}-200 hover:shadow-lg transition-shadow text-center`}>
             <p className="text-sm text-gray-600 font-medium mb-2">{stat.label}</p>
             <p className={`text-3xl font-bold text-${stat.color}-600`}>{stat.value}</p>
           </div>
@@ -190,6 +308,7 @@ const HospitalInfoSection = () => {
     { id: 'treatments', label: 'Treatments' },
     { id: 'services', label: 'Services' },
     { id: 'certifications', label: 'Certifications' },
+    { id: 'gallery', label: 'Gallery' },
   ];
 
   const fetchHospital = async () => {
@@ -231,7 +350,7 @@ const HospitalInfoSection = () => {
 
   /* ── Error ── */
   if (error) return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-indigo-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-linear-to-br from-gray-50 to-indigo-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl shadow-xl p-10 max-w-md w-full text-center space-y-5">
         <div className="w-16 h-16 rounded-full bg-red-50 border border-red-100 flex items-center justify-center mx-auto">
           <AlertCircle className="w-8 h-8 text-red-400" />
@@ -292,6 +411,8 @@ const HospitalInfoSection = () => {
             emptyMsg="No certifications listed."
           />
         );
+      case 'gallery':
+        return <GalleryTab images={hospital.gallery_images || []} />;
       default:
         return null;
     }
@@ -303,14 +424,14 @@ const HospitalInfoSection = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-indigo-50 p-4 md:p-8">
+    <div className="min-h-screen bg-linear-to-br from-gray-50 to-indigo-50 p-4 md:p-8">
       <Navbar />
       <div className="max-w-6xl mx-auto pt-8">
 
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden mb-6">
 
-          {/* ── Gradient Header ── */}
-          <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-700 p-8 md:p-10">
+          {/* ── linear Header ── */}
+          <div className="bg-linear-to-r from-indigo-600 via-purple-600 to-indigo-700 p-8 md:p-10">
             <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
               <div className="flex-1">
                 {badges.length > 0 && (
@@ -374,7 +495,7 @@ const HospitalInfoSection = () => {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`px-6 py-4 font-medium text-sm md:text-base whitespace-nowrap transition-all duration-300 relative
+                  className={`px-6 py-4 font-medium cursor-pointer text-sm md:text-base whitespace-nowrap transition-all duration-300 relative
                     ${activeTab === tab.id
                       ? 'text-indigo-600'
                       : 'text-gray-600 hover:text-indigo-600 hover:bg-gray-50'

@@ -22,7 +22,7 @@ const HospitalCard = ({ hospital }) => {
             onError={() => setImgError(true)}
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-50 to-green-50">
+          <div className="w-full h-full flex items-center justify-center bg-linear-to-br from-blue-50 to-green-50">
             <Stethoscope className="w-10 h-10 text-blue-200" />
           </div>
         )}
@@ -152,7 +152,7 @@ const HospitalCard = ({ hospital }) => {
                 {hospital.about}
               </p>
 
-              {/* Gradient Fade Effect */}
+              {/* linear Fade Effect */}
               <div className="absolute bottom-0 left-0 w-full h-8 pointer-events-none"></div>
             </div>
 
@@ -227,7 +227,7 @@ export default function HospitalsSection() {
   const cityName = hospitals[0]?.city || 'Your Area';
 
   return (
-    <section className="py-12 px-4 bg-gradient-to-b from-gray-50 to-white">
+    <section className="py-12 px-4 bg-linear-to-b from-gray-50 to-white">
       <div className="max-w-7xl mx-auto">
 
         {/* Section Header */}

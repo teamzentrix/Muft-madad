@@ -1,3 +1,25 @@
+// const { Pool } = require("pg");
+
+// const pool = new Pool({
+//   connectionString: process.env.DATABASE_URL, // full Neon URL
+//   ssl: {
+//     rejectUnauthorized: false, // required for Neon
+//   },
+// });
+
+// pool.on("connect", () => {
+//   console.log("Database connected successfully");
+// });
+
+// pool.on("error", (err) => {
+//   console.error("Database error:", err);
+// });
+
+// module.exports = pool;
+
+
+
+
 const { Pool } = require('pg');
 
 const pool = new Pool({

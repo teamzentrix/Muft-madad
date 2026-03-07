@@ -8,14 +8,23 @@ const {
     getHospitalBySlugController,
     getHospitalByIdController,
     updateHospitalController,
-    deleteHospitalController
+    deleteHospitalController,
+    getGalleryController,
+    addGalleryController,
+    removeGalleryImageController,
 } = require('../controllers/hospitals.controller');
 
-router.post('/hospitals', createHospitalController);
-router.get('/hospitals', getAllHospitalsController);
-router.get('/hospitals/slug/:slug', getHospitalBySlugController);
-router.get('/hospitals/:id', getHospitalByIdController);
-router.put('/hospitals/:id', updateHospitalController);
-router.delete('/hospitals/:id', deleteHospitalController);
+// ── Core CRUD ──────────────────────────────────────────
+router.post('/', createHospitalController);
+router.get('/', getAllHospitalsController);
+router.get('/slug/:slug', getHospitalBySlugController);
+router.get('/:id', getHospitalByIdController);
+router.put('/:id', updateHospitalController);
+router.delete('/:id', deleteHospitalController);
+
+// ── Gallery ────────────────────────────────────────────
+router.get('/:id/gallery', getGalleryController);       // fetch all gallery images
+router.post('/:id/gallery', addGalleryController);       // add images (append)
+router.delete('/:id/gallery', removeGalleryImageController); // remove one image by URL
 
 module.exports = router;

@@ -54,7 +54,7 @@ export default function BlogCards() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-purple-50 relative overflow-hidden">
+    <div className="min-h-screen bg-linear-to-br from-slate-50 via-white to-purple-50 relative overflow-hidden">
       <Navbar />
       {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -64,17 +64,17 @@ export default function BlogCards() {
       </div>
 
       {/* Grid pattern overlay */}
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(0,0,0,.02)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,.02)_1px,transparent_1px)] bg-[size:64px_64px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_50%,black,transparent)]"></div>
+      <div className="absolute inset-0 bg-[linear-linear(rgba(0,0,0,.02)_1px,transparent_1px),linear-linear(90deg,rgba(0,0,0,.02)_1px,transparent_1px)] bg-[size:64px_64px] [mask-image:radial-linear(ellipse_80%_50%_at_50%_50%,black,transparent)]"></div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-32">
         {/* Header */}
         <header className="text-center mb-20 animate-fade-in">
           <div className="inline-block mb-4">
-            <span className="px-4 py-2 bg-gradient-to-r from-purple-600/10 to-pink-600/10 border border-purple-600/20 rounded-full text-sm font-semibold text-purple-700 backdrop-blur-sm">
+            <span className="px-4 py-2 bg-linear-to-r from-purple-600/10 to-pink-600/10 border border-purple-600/20 rounded-full text-sm font-semibold text-purple-700 backdrop-blur-sm">
               ✨ Latest Insights
             </span>
           </div>
-          <h1 className="text-5xl sm:text-6xl lg:text-7xl font-medium uppercase mb-6 bg-gradient-to-r from-slate-900 via-purple-700 to-pink-600 text-transparent bg-clip-text leading-tight">
+          <h1 className="text-5xl sm:text-6xl lg:text-7xl font-medium uppercase mb-6 bg-linear-to-r from-slate-900 via-purple-700 to-pink-600 text-transparent bg-clip-text leading-tight">
             Discover Our Blog
           </h1>
           <p className="text-xl text-slate-600 max-w-2xl mx-auto">
@@ -92,8 +92,8 @@ export default function BlogCards() {
               onMouseEnter={() => setHoveredCard(blog.id)}
               onMouseLeave={() => setHoveredCard(null)}
             >
-              {/* Gradient overlay on hover */}
-              <div className={`absolute inset-0 bg-gradient-to-br ${blog.categoryColor} opacity-0 group-hover:opacity-10 transition-opacity duration-500 pointer-events-none`}></div>
+              {/* linear overlay on hover */}
+              <div className={`absolute inset-0 bg-linear-to-br ${blog.categoryColor} opacity-0 group-hover:opacity-10 transition-opacity duration-500 pointer-events-none`}></div>
 
               {/* Image Container */}
               <div className="relative h-64 overflow-hidden bg-slate-100">
@@ -105,7 +105,7 @@ export default function BlogCards() {
                 
                 {/* Category Badge */}
                 <div className="absolute top-4 left-4">
-                  <span className={`inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r ${blog.categoryColor} rounded-full text-xs font-bold text-white shadow-lg backdrop-blur-sm`}>
+                  <span className={`inline-flex items-center gap-2 px-4 py-2 bg-linear-to-r ${blog.categoryColor} rounded-full text-xs font-bold text-white shadow-lg backdrop-blur-sm`}>
                     <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                       <path d="M10 2a8 8 0 100 16 8 8 0 000-16zm1 11H9v-2h2v2zm0-4H9V5h2v4z"/>
                     </svg>
@@ -114,7 +114,7 @@ export default function BlogCards() {
                 </div>
 
                 {/* Hover overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-white via-white/20 to-transparent opacity-40 group-hover:opacity-60 transition-opacity duration-500"></div>
+                <div className="absolute inset-0 bg-linear-to-t from-white via-white/20 to-transparent opacity-40 group-hover:opacity-60 transition-opacity duration-500"></div>
               </div>
 
               {/* Content */}
@@ -136,7 +136,7 @@ export default function BlogCards() {
                 </div>
 
                 {/* Title */}
-                <h2 className="text-2xl font-bold text-slate-900 group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-purple-600 group-hover:to-pink-600 group-hover:bg-clip-text transition-all duration-300 line-clamp-2">
+                <h2 className="text-2xl font-bold text-slate-900 group-hover:text-transparent group-hover:bg-linear-to-r group-hover:from-purple-600 group-hover:to-pink-600 group-hover:bg-clip-text transition-all duration-300 line-clamp-2">
                   {blog.title}
                 </h2>
 
@@ -173,9 +173,9 @@ export default function BlogCards() {
                 </div>
               </div>
 
-              {/* Animated border gradient */}
+              {/* Animated border linear */}
               <div className={`absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none`}>
-                <div className={`absolute inset-0 rounded-3xl bg-gradient-to-r ${blog.categoryColor} opacity-10 blur-xl`}></div>
+                <div className={`absolute inset-0 rounded-3xl bg-linear-to-r ${blog.categoryColor} opacity-10 blur-xl`}></div>
               </div>
             </article>
           ))}
@@ -183,9 +183,9 @@ export default function BlogCards() {
 
         {/* Load More Button */}
         <div className="text-center mt-16">
-          <button className="group relative px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full font-bold text-white shadow-lg shadow-purple-500/30 hover:shadow-purple-500/50 transition-all duration-300 hover:scale-105 overflow-hidden">
+          <button className="group relative px-8 py-4 bg-linear-to-r from-purple-600 to-pink-600 rounded-full font-bold text-white shadow-lg shadow-purple-500/30 hover:shadow-purple-500/50 transition-all duration-300 hover:scale-105 overflow-hidden">
             <span className="relative z-10">Load More Articles</span>
-            <div className="absolute inset-0 bg-gradient-to-r from-pink-600 to-purple-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            <div className="absolute inset-0 bg-linear-to-r from-pink-600 to-purple-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
           </button>
         </div>
       </div>

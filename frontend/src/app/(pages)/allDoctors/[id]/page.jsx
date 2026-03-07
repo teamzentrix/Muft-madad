@@ -128,7 +128,7 @@ const injectStyles = () => {
             100% { background-position: 400px 0; }
         }
         .dpl-skel {
-            background: linear-gradient(90deg, #f0f4f8 25%, #e2eaf4 50%, #f0f4f8 75%);
+            background: linear-linear(90deg, #f0f4f8 25%, #e2eaf4 50%, #f0f4f8 75%);
             background-size: 800px 100%;
             animation: dpl-skeleton-wave 1.6s infinite;
             border-radius: 6px;
@@ -235,7 +235,7 @@ const DoctorProfile = ({ doctor }) => {
 
                 {/* ──── LEFT: Photo Panel ──── */}
                 <div className="dpl-photo-panel" style={{
-                    background: 'linear-gradient(160deg, #daeeff 0%, #c5dfff 60%, #b8d4f8 100%)',
+                    background: 'linear-linear(160deg, #daeeff 0%, #c5dfff 60%, #b8d4f8 100%)',
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
@@ -273,7 +273,7 @@ const DoctorProfile = ({ doctor }) => {
                             overflow: 'hidden',
                             border: '4px solid #fff',
                             boxShadow: '0 12px 40px rgba(14,100,200,0.22)',
-                            background: 'linear-gradient(135deg, #93c5fd, #3b82f6)',
+                            background: 'linear-linear(135deg, #93c5fd, #3b82f6)',
                             position: 'relative',
                             zIndex: 1,
                         }}>
@@ -677,20 +677,20 @@ export default function DoctorProfilePage() {
     return (
         <div style={{
             minHeight: '100vh',
-            background: 'linear-gradient(150deg, #eef6ff 0%, #f5f9ff 50%, #edf3fb 100%)',
+            background: 'linear-linear(150deg, #eef6ff 0%, #f5f9ff 50%, #edf3fb 100%)',
             position: 'relative',
         }}>
             {/* Subtle background decoration */}
             <div style={{
                 position: 'fixed', top: '5%', right: '3%',
                 width: 420, height: 420,
-                background: 'radial-gradient(circle, rgba(29,111,196,0.06) 0%, transparent 70%)',
+                background: 'radial-linear(circle, rgba(29,111,196,0.06) 0%, transparent 70%)',
                 borderRadius: '50%', pointerEvents: 'none', zIndex: 0,
             }} />
             <div style={{
                 position: 'fixed', bottom: '10%', left: '2%',
                 width: 340, height: 340,
-                background: 'radial-gradient(circle, rgba(56,189,248,0.07) 0%, transparent 70%)',
+                background: 'radial-linear(circle, rgba(56,189,248,0.07) 0%, transparent 70%)',
                 borderRadius: '50%', pointerEvents: 'none', zIndex: 0,
             }} />
 

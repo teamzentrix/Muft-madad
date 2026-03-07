@@ -21,7 +21,7 @@ const DoctorCard = ({ doctor }) => {
                             className="object-cover w-full h-full"
                         />
                     ) : (
-                        <div className="w-full h-full bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center">
+                        <div className="w-full h-full bg-linear-to-br from-blue-100 to-purple-100 flex items-center justify-center">
                             <User className="w-8 h-8 text-blue-600" />
                         </div>
                     )}
@@ -142,13 +142,13 @@ export default function DoctorsSection() {
     };
 
     return (
-        <section className="pt-22 md:pt-36 bg-gradient-to-b from-gray-50 to-white">
+        <section className="pt-22 md:pt-36 bg-linear-to-b from-gray-50 to-white">
             <Navbar />
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
 
                 {/* Section Header */}
                 <div className="mb-10 flex flex-col items-center justify-center w-full">
-                    <h2 className="text-3xl md:text-4xl lg:text-5xl text-center uppercase font-medium font-serif bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent mb-2">
+                    <h2 className="text-3xl md:text-4xl lg:text-5xl text-center uppercase font-medium font-serif bg-linear-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent mb-2">
                         Our Expert Doctors
                     </h2>
                     <p className="text-md md:text-xl text-gray-600 text-center">

@@ -126,7 +126,7 @@ export default function TreatmentPage({ params }) {
 
             <Navbar />
             {/* Hero Section */}
-            <div className="bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 text-white md:my-22 my-14">
+            <div className="bg-linear-to-br from-blue-600 via-blue-700 to-indigo-800 text-white md:my-22 my-14">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
                     <div className="grid md:grid-cols-2 gap-8 items-center">
                         <div className="space-y-6">
@@ -285,7 +285,7 @@ export default function TreatmentPage({ params }) {
                                 </p>
                                 <div className="grid sm:grid-cols-2 gap-4">
                                     {causes_list?.map((cause, index) => (
-                                        <div key={index} className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 border border-blue-100 hover:shadow-md transition-shadow">
+                                        <div key={index} className="bg-linear-to-br from-blue-50 to-indigo-50 rounded-xl p-6 border border-blue-100 hover:shadow-md transition-shadow">
                                             <h3 className="font-semibold text-gray-900 mb-2 text-lg">{cause.title}</h3>
                                             <p className="text-gray-600 text-sm">{cause.description}</p>
                                         </div>
@@ -334,7 +334,7 @@ export default function TreatmentPage({ params }) {
                                 </p>
                                 <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
                                     {diagnosis_steps?.map((step, index) => (
-                                        <div key={index} className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-6 border border-purple-100 hover:shadow-lg transition-all">
+                                        <div key={index} className="bg-linear-to-br from-purple-50 to-pink-50 rounded-xl p-6 border border-purple-100 hover:shadow-lg transition-all">
                                             <div className="text-4xl mb-3">{step.icon}</div>
                                             <h3 className="font-semibold text-gray-900 mb-2 text-lg">{step.title}</h3>
                                             <p className="text-gray-600 text-sm">{step.description}</p>
@@ -430,7 +430,7 @@ export default function TreatmentPage({ params }) {
                                 </p>
                                 <div className="space-y-4 mb-8">
                                     {cost_ranges?.map((range, index) => (
-                                        <div key={index} className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-6 border border-green-200">
+                                        <div key={index} className="bg-linear-to-r from-green-50 to-emerald-50 rounded-xl p-6 border border-green-200">
                                             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                                                 <div className="flex-1">
                                                     <h3 className="font-normal uppercase text-gray-900 text-lg mb-2">{range.hospital_type}</h3>
@@ -469,7 +469,7 @@ export default function TreatmentPage({ params }) {
                                     Is Treatment Covered Under Ayushman Bharat?
                                 </h2>
 
-                                <div className={`${ayushman_covered ? 'bg-gradient-to-r from-green-500 to-emerald-600' : 'bg-gradient-to-r from-red-500 to-rose-600'} text-white rounded-xl p-6 mb-6`}>
+                                <div className={`${ayushman_covered ? 'bg-linear-to-r from-green-500 to-emerald-600' : 'bg-linear-to-r from-red-500 to-rose-600'} text-white rounded-xl p-6 mb-6`}>
                                     <div className="flex items-center gap-4">
                                         <svg className="w-16 h-16 shrink-0" fill="currentColor" viewBox="0 0 20 20">
                                             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
@@ -554,7 +554,7 @@ export default function TreatmentPage({ params }) {
                                     <Building2 className="w-8 h-8" />
                                     <span>All Empanelled Hospitals</span>
                                 </h2>
-                                <div className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-xl p-6 mb-8">
+                                <div className="bg-linear-to-r from-blue-500 to-indigo-600 text-white rounded-xl p-6 mb-8">
                                     <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
                                         <div className="flex items-center gap-3 flex-1">
                                             <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
@@ -571,10 +571,10 @@ export default function TreatmentPage({ params }) {
                                     </div>
                                 </div>
                                 <div className="grid md:grid-cols-4 gap-4 mb-8">
-                                    <div className="bg-gradient-to-br from-green-500 to-emerald-600 text-white p-6 rounded-xl text-center"><div className="text-3xl font-bold">247</div><div className="text-sm opacity-90">Total Hospitals</div></div>
-                                    <div className="bg-gradient-to-br from-blue-500 to-cyan-500 text-white p-6 rounded-xl text-center"><div className="text-3xl font-bold">156</div><div className="text-sm opacity-90">In Your City</div></div>
-                                    <div className="bg-gradient-to-br from-purple-500 to-violet-600 text-white p-6 rounded-xl text-center"><div className="text-3xl font-bold">89%</div><div className="text-sm opacity-90">Verified</div></div>
-                                    <div className="bg-gradient-to-br from-orange-500 to-red-500 text-white p-6 rounded-xl text-center"><div className="text-3xl font-bold">24/7</div><div className="text-sm opacity-90">Emergency Care</div></div>
+                                    <div className="bg-linear-to-br from-green-500 to-emerald-600 text-white p-6 rounded-xl text-center"><div className="text-3xl font-bold">247</div><div className="text-sm opacity-90">Total Hospitals</div></div>
+                                    <div className="bg-linear-to-br from-blue-500 to-cyan-500 text-white p-6 rounded-xl text-center"><div className="text-3xl font-bold">156</div><div className="text-sm opacity-90">In Your City</div></div>
+                                    <div className="bg-linear-to-br from-purple-500 to-violet-600 text-white p-6 rounded-xl text-center"><div className="text-3xl font-bold">89%</div><div className="text-sm opacity-90">Verified</div></div>
+                                    <div className="bg-linear-to-br from-orange-500 to-red-500 text-white p-6 rounded-xl text-center"><div className="text-3xl font-bold">24/7</div><div className="text-sm opacity-90">Emergency Care</div></div>
                                 </div>
                                 <p className="text-gray-500 text-center py-8">Hospital listings coming soon.</p>
                             </div>
@@ -587,7 +587,7 @@ export default function TreatmentPage({ params }) {
                                     <Users className="w-8 h-8" />
                                     <span>Top Doctors Near You</span>
                                 </h2>
-                                <div className="bg-gradient-to-r from-purple-500 to-pink-600 text-white rounded-xl p-6 mb-8">
+                                <div className="bg-linear-to-r from-purple-500 to-pink-600 text-white rounded-xl p-6 mb-8">
                                     <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
                                         <div className="flex items-center gap-3 flex-1">
                                             <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
@@ -635,7 +635,7 @@ export default function TreatmentPage({ params }) {
                     <div className="lg:col-span-1">
                         <div className="sticky top-24 space-y-6">
                             {/* Contact Card */}
-                            <div className="bg-gradient-to-br from-blue-600 to-indigo-700 text-white rounded-2xl p-6 shadow-xl">
+                            <div className="bg-linear-to-br from-blue-600 to-indigo-700 text-white rounded-2xl p-6 shadow-xl">
                                 <h3 className="text-xl font-bold mb-4">Need Assistance?</h3>
                                 <p className="text-blue-100 mb-6">Our medical experts are here to help you 24/7</p>
                                 <div className="space-y-3">
