@@ -204,7 +204,7 @@ export default function HospitalsSection() {
     setLoading(true);
     setError('');
     try {
-      const response = await axios.get('http://localhost:4000/api/auth/hospitals', {
+      const response = await axios.get('http://localhost:4000/api/hospitals', {
         withCredentials: true,
       });
 

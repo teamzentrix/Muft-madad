@@ -14,6 +14,8 @@ const doctorsRoutes = require("./routes/doctors.routes");
 const PORT = process.env.PORT || 4000;
 const app = express();
 
+
+console.log(process.env.DATABASE_URL);
 // 1. CORS first
 app.use(cors({
     origin: "http://localhost:3000",

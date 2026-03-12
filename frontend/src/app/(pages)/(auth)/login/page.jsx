@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import axios from 'axios';
 
 export default function LoginPage() {
@@ -13,6 +14,7 @@ export default function LoginPage() {
 
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
+  const router = useRouter();
 
   // Configure axios to send cookies with requests
   axios.defaults.withCredentials = true;
@@ -94,12 +96,9 @@ export default function LoginPage() {
       }
 
       // Simulate redirect after 1.5 seconds
-      setTimeout(() => {
-        console.log('Redirecting to dashboard...');
-        window.location.href = '/dashboard';
-        // OR if using React Router:
-        // navigate('/dashboard');
-      }, 1500);
+     setTimeout(() => {
+  router.push('/dashboard');
+}, 1500);
       
     } catch (err) {
       console.error('Login error:', err);
