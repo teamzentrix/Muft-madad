@@ -144,7 +144,7 @@ const getAllDoctors = async (filters = {}, page = 1, limit = 10) => {
         values.push(`%${filters.city}%`);
     }
     if (filters.specialty) {
-        conditions.push(`$${p++} = ANY(specialities)`);
+        conditions.push(`EXISTS (SELECT 1 FROM unnest(specialities) s WHERE s ILIKE $${p++})`);
         values.push(filters.specialty);
     }
     if (filters.is_active !== undefined && filters.is_active !== '') {
@@ -258,7 +258,7 @@ const searchDoctors = async ({ q, city, specialty, min_fee, max_fee, min_rating 
 
     if (q) { conditions.push(`(name ILIKE $${p} OR overview ILIKE $${p})`); values.push(`%${q}%`); p++; }
     if (city) { conditions.push(`city ILIKE $${p++}`); values.push(`%${city}%`); }
-    if (specialty) { conditions.push(`$${p++} = ANY(specialities)`); values.push(specialty); }
+    if (specialty) { conditions.push(`EXISTS (SELECT 1 FROM unnest(specialities) s WHERE s ILIKE $${p++})`); values.push(specialty); }
     if (min_fee) { conditions.push(`consultation_fee >= $${p++}`); values.push(parseFloat(min_fee)); }
     if (max_fee) { conditions.push(`consultation_fee <= $${p++}`); values.push(parseFloat(max_fee)); }
     if (min_rating) { conditions.push(`average_rating >= $${p++}`); values.push(parseFloat(min_rating)); }
