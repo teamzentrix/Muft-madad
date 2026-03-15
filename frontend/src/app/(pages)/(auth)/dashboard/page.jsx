@@ -785,7 +785,15 @@ function Sidebar({ activePage, setPage }) {
       </div>
 
       <div className="p-6 border-t border-gray-100">
-        <button onClick={() => router.push('/login')}
+        <button onClick={async () => {
+          try {
+            await axios.post('http://localhost:4000/api/auth/logout', {}, { withCredentials: true });
+          } catch (e) { /* ignore */ }
+          // ✅ Clear localStorage token so dashboard auth check fails next time
+          localStorage.removeItem('authToken');
+          localStorage.removeItem('user');
+          router.replace('/login');
+        }}
           className="w-full flex items-center gap-3 px-4 py-3 text-red-500 hover:bg-red-50 rounded-xl transition-all">
           <LogOut className="w-5 h-5" />
           <span className="font-medium">Logout</span>
@@ -1378,6 +1386,41 @@ function ReviewsListPage({ setPage }) {
 // ─── App Root ─────────────────────────────────────────────────────────────────
 export default function HospitalDashboard() {
   const [page, setPage] = useState('dashboard');
+  const [authChecked, setAuthChecked] = useState(false);
+  const router = useRouter();
+
+  // Verify session with backend on every mount
+  useEffect(() => {
+    const verifyAuth = async () => {
+      const token = localStorage.getItem('authToken');
+      if (!token) { router.replace('/login'); return; }
+      try {
+        await axios.get('http://localhost:4000/api/auth/check-auth', {
+          headers: { Authorization: `Bearer ${token}` },
+          withCredentials: true,
+          timeout: 5000,
+        });
+        setAuthChecked(true);
+      } catch {
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('user');
+        router.replace('/login');
+      }
+    };
+    verifyAuth();
+  }, []);
+
+  // Block dashboard render until auth is confirmed — prevents flash
+  if (!authChecked) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
+        <div className="flex flex-col items-center gap-4 text-gray-500">
+          <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
+          <p className="font-medium">Verifying session...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
