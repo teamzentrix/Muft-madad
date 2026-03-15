@@ -5,6 +5,7 @@ const router = express.Router();
 const {
     createHospitalController,
     getAllHospitalsController,
+    getHospitalsBySpeciality,            // ✅ matches exact export name in controller
     getHospitalBySlugController,
     getHospitalByIdController,
     updateHospitalController,
@@ -15,16 +16,16 @@ const {
 } = require('../controllers/hospitals.controller');
 
 // ── Core CRUD ──────────────────────────────────────────
-router.post('/', createHospitalController);
-router.get('/', getAllHospitalsController);
-router.get('/slug/:slug', getHospitalBySlugController);
-router.get('/:id', getHospitalByIdController);
-router.put('/:id', updateHospitalController);
-router.delete('/:id', deleteHospitalController);
+router.post('/',            createHospitalController);
+router.get('/',             getHospitalsBySpeciality);          // ✅ handles both ?specialty= and no filter
+router.get('/slug/:slug',   getHospitalBySlugController);
+router.get('/:id',          getHospitalByIdController);
+router.put('/:id',          updateHospitalController);
+router.delete('/:id',       deleteHospitalController);
 
 // ── Gallery ────────────────────────────────────────────
-router.get('/:id/gallery', getGalleryController);       // fetch all gallery images
-router.post('/:id/gallery', addGalleryController);       // add images (append)
-router.delete('/:id/gallery', removeGalleryImageController); // remove one image by URL
+router.get('/:id/gallery',    getGalleryController);
+router.post('/:id/gallery',   addGalleryController);
+router.delete('/:id/gallery', removeGalleryImageController);
 
 module.exports = router;

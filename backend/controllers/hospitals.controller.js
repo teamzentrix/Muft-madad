@@ -9,6 +9,7 @@ const {
     addGalleryImagesService,
     removeGalleryImageService,
     getGalleryImagesService,
+    getHospitalsBySpecialityService
 } = require('../services/hospitals.services');
 
 const createHospitalController = async (req, res) => {
@@ -65,6 +66,23 @@ const getAllHospitalsController = async (req, res) => {
     } catch (error) {
         console.error('Get hospitals error:', error);
         return res.status(500).json({ message: 'Failed to fetch hospitals' });
+    }
+};
+
+const getHospitalsBySpeciality = async (req, res) => {
+    try {
+        const { specialty } = req.query;
+ 
+        if (!specialty) {
+            // No filter — return all hospitals
+            const hospitals = await getAllHospitalsService();
+            return res.status(200).json({ success: true, data: hospitals });
+        }
+ 
+        const hospitals = await getHospitalsBySpecialityService(specialty);
+        return res.status(200).json({ success: true, data: hospitals });
+    } catch (error) {
+        return res.status(500).json({ success: false, message: error.message });
     }
 };
 
@@ -188,4 +206,5 @@ module.exports = {
     getGalleryController,
     addGalleryController,
     removeGalleryImageController,
+    getHospitalsBySpeciality
 };

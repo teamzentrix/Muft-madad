@@ -42,6 +42,7 @@ const getSpecialityById = async (req, res) => {
     }
 };
 
+
 const deleteSpeciality = async (req, res) => {
     try {
         const result = await deleteSpecialityService(req.params.id);

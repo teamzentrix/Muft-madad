@@ -23,44 +23,62 @@ export default function SpecialityPage({ params }) {
 
   useEffect(() => {
     if (!id) return;
+
     const fetchAll = async () => {
       try {
         setLoading(true);
-        // 1. Fetch speciality details
+
+        // 1. Fetch speciality details first — we need name_en for filtering
         const specRes = await axios.get(
           `http://localhost:4000/api/specialities/${id}`,
           { withCredentials: true }
         );
-        setSpeciality(specRes.data.data);
+        const spec = specRes.data.data;
+        setSpeciality(spec);
 
-        // 2. Fetch treatments for this speciality
-        const treatRes = await axios.get(
-          `http://localhost:4000/api/admin/getBySpecialty/${id}`,
-          { withCredentials: true }
-        );
-        const treatData = treatRes.data;
-        setTreatments(Array.isArray(treatData) ? treatData : (treatData.data || []));
+        const specialityNameEn = spec?.name_en || '';
 
-        // 3. Fetch hospitals for this speciality
-        try {
-          const hospRes = await axios.get(
-            `http://localhost:4000/api/hospitals?specialty=${id}`,
+        // 2. Fetch all three in parallel now that we have the name
+        const [treatRes, hospRes, docRes] = await Promise.allSettled([
+
+          // Treatments — filtered by specialty_id (integer FK)
+          axios.get(
+            `http://localhost:4000/api/admin/getBySpecialty/${id}`,
             { withCredentials: true }
-          );
-          setHospitals(hospRes.data.data || []);
-        } catch { setHospitals([]); }
+          ),
 
-        // 4. Fetch doctors for this speciality
-        try {
-          const docRes = await axios.get(
-            `http://localhost:4000/api/doctors?specialty=${encodeURIComponent(
-              // we'll send the english name after we have the speciality
-              specRes.data.data?.name_en || ''
-            )}`,
+          // Hospitals — filtered by available_specialities text[] array
+          axios.get(
+            `http://localhost:4000/api/hospitals?specialty=${encodeURIComponent(specialityNameEn)}`,
             { withCredentials: true }
-          );
-          setDoctors(docRes.data.data || []);
-        } catch { setDoctors([]); }
+          ),
+
+          // Doctors — filtered by specialities text[] array
+          axios.get(
+            `http://localhost:4000/api/doctors?specialty=${encodeURIComponent(specialityNameEn)}`,
+            { withCredentials: true }
+          ),
+        ]);
+
+        // Treatments
+        if (treatRes.status === 'fulfilled') {
+  const d = treatRes.value.data;
+  setTreatments(Array.isArray(d) ? d : (d?.data || []));
+  console.log('treatments response:', d); // ✅ temporary — remove after confirming
+}
+
+        // Hospitals
+        if (hospRes.status === 'fulfilled') {
+          const d = hospRes.value.data;
+          setHospitals(Array.isArray(d) ? d : (d?.data || []));
+        }
+
+        // Doctors
+        if (docRes.status === 'fulfilled') {
+          const d = docRes.value.data;
+          // doctors endpoint returns { data: [...], pagination: {} }
+          setDoctors(Array.isArray(d) ? d : (d?.data || []));
+        }
 
       } catch (err) {
         setError(err.response?.data?.message || 'Failed to load speciality');
@@ -68,13 +86,14 @@ export default function SpecialityPage({ params }) {
         setLoading(false);
       }
     };
+
     fetchAll();
   }, [id]);
 
   const tabs = [
-    { id: 'treatments', label: lang === 'en' ? 'Treatments' : 'उपचार', emoji: '💊' },
-    { id: 'hospitals', label: lang === 'en' ? 'Hospitals' : 'अस्पताल', emoji: '🏥' },
-    { id: 'doctors', label: lang === 'en' ? 'Doctors' : 'डॉक्टर', emoji: '👨‍⚕️' },
+    { id: 'treatments', label: lang === 'en' ? 'Treatments' : 'उपचार',  emoji: '💊' },
+    { id: 'hospitals',  label: lang === 'en' ? 'Hospitals'  : 'अस्पताल', emoji: '🏥' },
+    { id: 'doctors',    label: lang === 'en' ? 'Doctors'    : 'डॉक्टर',  emoji: '👨‍⚕️' },
   ];
 
   if (loading) return (
@@ -98,15 +117,16 @@ export default function SpecialityPage({ params }) {
     </div>
   );
 
-  const specialityName = speciality
-    ? (lang === 'en' ? speciality.name_en : speciality.name_hi)
-    : '';
+  if (!speciality) return null;
+
+  const specialityName = lang === 'en' ? speciality.name_en : speciality.name_hi;
+  const specialityDesc = lang === 'en' ? speciality.description_en : speciality.description_hi;
 
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
 
-      {/* Hero */}
+      {/* ── Hero ─────────────────────────────────────────────────────────── */}
       <div className="bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 text-white md:mt-22 mt-14">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
           <div className="grid md:grid-cols-2 gap-8 items-center">
@@ -117,11 +137,9 @@ export default function SpecialityPage({ params }) {
               <h1 className="text-3xl sm:text-4xl md:text-5xl font-medium uppercase leading-tight">
                 {specialityName}
               </h1>
-              <p className="text-lg text-blue-100">
-                {speciality
-                  ? (lang === 'en' ? speciality.description_en : speciality.description_hi)
-                  : ''}
-              </p>
+              {specialityDesc && (
+                <p className="text-lg text-blue-100">{specialityDesc}</p>
+              )}
               <div className="flex flex-wrap gap-6 pt-2 text-sm">
                 <div className="flex items-center gap-2">
                   <span className="text-green-300">✔</span>
@@ -137,7 +155,7 @@ export default function SpecialityPage({ params }) {
                 </div>
               </div>
             </div>
-            {speciality?.image && (
+            {speciality.image && (
               <div className="hidden md:block">
                 <img
                   src={speciality.image}
@@ -150,7 +168,7 @@ export default function SpecialityPage({ params }) {
         </div>
       </div>
 
-      {/* Tabs */}
+      {/* ── Tabs ─────────────────────────────────────────────────────────── */}
       <div className="sticky top-0 z-40 bg-white border-b border-gray-200 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex gap-2 py-4">
@@ -179,22 +197,18 @@ export default function SpecialityPage({ params }) {
         </div>
       </div>
 
-      {/* Content */}
+      {/* ── Content ──────────────────────────────────────────────────────── */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
 
-        {/* Treatments Tab */}
+        {/* ── Treatments ── */}
         {activeTab === 'treatments' && (
           <div>
             <h2 className="text-2xl font-semibold text-gray-900 mb-6">
               {lang === 'en' ? `Treatments for ${specialityName}` : `${specialityName} के उपचार`}
             </h2>
+
             {treatments.length === 0 ? (
-              <div className="text-center py-20 bg-white rounded-2xl shadow">
-                <div className="text-5xl mb-4">💊</div>
-                <p className="text-gray-500 text-lg">
-                  {lang === 'en' ? 'No treatments found for this specialty yet.' : 'अभी कोई उपचार नहीं मिला।'}
-                </p>
-              </div>
+              <EmptyState emoji="💊" message={lang === 'en' ? 'No treatments found for this specialty yet.' : 'अभी कोई उपचार नहीं मिला।'} />
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {treatments.map((treatment) => (
@@ -225,25 +239,11 @@ export default function SpecialityPage({ params }) {
                         {treatment.overview_description}
                       </p>
                       <div className="grid grid-cols-2 gap-2 text-xs text-gray-500 mb-4">
-                        {treatment.surgery_duration && (
-                          <div className="flex items-center gap-1">
-                            <span>⏱</span> {treatment.surgery_duration}
-                          </div>
-                        )}
-                        {treatment.success_rate && (
-                          <div className="flex items-center gap-1">
-                            <span>✅</span> {treatment.success_rate}
-                          </div>
-                        )}
-                        {treatment.recovery_time && (
-                          <div className="flex items-center gap-1">
-                            <span>📅</span> {treatment.recovery_time}
-                          </div>
-                        )}
+                        {treatment.surgery_duration && <span>⏱ {treatment.surgery_duration}</span>}
+                        {treatment.success_rate    && <span>✅ {treatment.success_rate}</span>}
+                        {treatment.recovery_time   && <span>📅 {treatment.recovery_time}</span>}
                         {treatment.ayushman_covered && (
-                          <div className="flex items-center gap-1 text-green-600 font-semibold">
-                            <span>🏛</span> Ayushman
-                          </div>
+                          <span className="text-green-600 font-semibold">🏛 Ayushman</span>
                         )}
                       </div>
                       <button className="w-full py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl text-sm font-semibold hover:from-blue-700 hover:to-purple-700 transition-all">
@@ -257,19 +257,15 @@ export default function SpecialityPage({ params }) {
           </div>
         )}
 
-        {/* Hospitals Tab */}
+        {/* ── Hospitals ── */}
         {activeTab === 'hospitals' && (
           <div>
             <h2 className="text-2xl font-semibold text-gray-900 mb-6">
               {lang === 'en' ? `Hospitals for ${specialityName}` : `${specialityName} के अस्पताल`}
             </h2>
+
             {hospitals.length === 0 ? (
-              <div className="text-center py-20 bg-white rounded-2xl shadow">
-                <div className="text-5xl mb-4">🏥</div>
-                <p className="text-gray-500 text-lg">
-                  {lang === 'en' ? 'No hospitals found for this specialty yet.' : 'अभी कोई अस्पताल नहीं मिला।'}
-                </p>
-              </div>
+              <EmptyState emoji="🏥" message={lang === 'en' ? 'No hospitals found for this specialty yet.' : 'अभी कोई अस्पताल नहीं मिला।'} />
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {hospitals.map((hospital) => (
@@ -277,18 +273,37 @@ export default function SpecialityPage({ params }) {
                     key={hospital.id || hospital.uuid}
                     className="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100 hover:border-blue-200 hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
                   >
-                    {hospital.image && (
+                    {hospital.photo ? (
                       <div className="h-40 overflow-hidden">
-                        <img src={hospital.image} alt={hospital.name} className="w-full h-full object-cover" />
+                        <img src={hospital.photo} alt={hospital.name} className="w-full h-full object-cover" />
+                      </div>
+                    ) : (
+                      <div className="h-40 bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center text-5xl">
+                        🏥
                       </div>
                     )}
                     <div className="p-5">
-                      <h3 className="text-lg font-semibold text-gray-900 mb-1">{hospital.name}</h3>
+                      <div className="flex items-start justify-between gap-2 mb-2">
+                        <h3 className="text-base font-semibold text-gray-900">{hospital.name}</h3>
+                        {hospital.is_verified && (
+                          <span className="shrink-0 px-2 py-0.5 bg-green-100 text-green-700 text-xs font-semibold rounded-full">✓ Verified</span>
+                        )}
+                      </div>
                       {hospital.city && (
-                        <p className="text-sm text-gray-500 mb-2">📍 {hospital.city}, {hospital.state}</p>
+                        <p className="text-sm text-gray-500 mb-2">📍 {hospital.city}{hospital.state ? `, ${hospital.state}` : ''}</p>
                       )}
-                      {hospital.average_rating > 0 && (
-                        <p className="text-sm text-yellow-600 mb-3">⭐ {hospital.average_rating}/5</p>
+                      {hospital.phone && (
+                        <p className="text-sm text-gray-500 mb-2">📞 {hospital.phone}</p>
+                      )}
+                      {hospital.rating > 0 && (
+                        <p className="text-sm text-yellow-500 mb-3">⭐ {hospital.rating}/5
+                          {hospital.total_reviews > 0 && (
+                            <span className="text-gray-400 text-xs ml-1">({hospital.total_reviews} reviews)</span>
+                          )}
+                        </p>
+                      )}
+                      {hospital.timing_display && (
+                        <p className="text-xs text-gray-400">🕐 {hospital.timing_display}</p>
                       )}
                     </div>
                   </div>
@@ -298,19 +313,15 @@ export default function SpecialityPage({ params }) {
           </div>
         )}
 
-        {/* Doctors Tab */}
+        {/* ── Doctors ── */}
         {activeTab === 'doctors' && (
           <div>
             <h2 className="text-2xl font-semibold text-gray-900 mb-6">
               {lang === 'en' ? `Doctors for ${specialityName}` : `${specialityName} के डॉक्टर`}
             </h2>
+
             {doctors.length === 0 ? (
-              <div className="text-center py-20 bg-white rounded-2xl shadow">
-                <div className="text-5xl mb-4">👨‍⚕️</div>
-                <p className="text-gray-500 text-lg">
-                  {lang === 'en' ? 'No doctors found for this specialty yet.' : 'अभी कोई डॉक्टर नहीं मिला।'}
-                </p>
-              </div>
+              <EmptyState emoji="👨‍⚕️" message={lang === 'en' ? 'No doctors found for this specialty yet.' : 'अभी कोई डॉक्टर नहीं मिला।'} />
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {doctors.map((doctor) => (
@@ -326,17 +337,23 @@ export default function SpecialityPage({ params }) {
                           className="w-16 h-16 rounded-full object-cover border-2 border-blue-100 shrink-0"
                         />
                       ) : (
-                        <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center text-2xl shrink-0">
+                        <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center text-2xl shrink-0">
                           👨‍⚕️
                         </div>
                       )}
                       <div className="flex-1 min-w-0">
-                        <h3 className="text-base font-semibold text-gray-900">{doctor.name}</h3>
+                        <h3 className="text-base font-semibold text-gray-900 mb-1">{doctor.name}</h3>
                         {doctor.degrees?.length > 0 && (
                           <p className="text-xs text-blue-600 mb-1">{doctor.degrees.join(', ')}</p>
                         )}
+                        {doctor.specialities?.length > 0 && (
+                          <p className="text-xs text-purple-600 mb-1">{doctor.specialities.join(', ')}</p>
+                        )}
                         {doctor.experience_in_years && (
-                          <p className="text-xs text-gray-500">🩺 {doctor.experience_in_years} yrs exp</p>
+                          <p className="text-xs text-gray-500">🩺 {doctor.experience_in_years} yrs experience</p>
+                        )}
+                        {doctor.currently_serving && (
+                          <p className="text-xs text-gray-500 truncate">🏥 {doctor.currently_serving}</p>
                         )}
                         {doctor.city && (
                           <p className="text-xs text-gray-500">📍 {doctor.city}</p>
@@ -347,7 +364,15 @@ export default function SpecialityPage({ params }) {
                           </p>
                         )}
                         {doctor.average_rating > 0 && (
-                          <p className="text-xs text-yellow-600">⭐ {doctor.average_rating}/5</p>
+                          <p className="text-xs text-yellow-500 mt-1">
+                            ⭐ {doctor.average_rating}/5
+                            {doctor.total_reviews > 0 && (
+                              <span className="text-gray-400 ml-1">({doctor.total_reviews})</span>
+                            )}
+                          </p>
+                        )}
+                        {doctor.is_verified && (
+                          <span className="inline-block mt-1 px-2 py-0.5 bg-green-100 text-green-700 text-xs font-semibold rounded-full">✓ Verified</span>
                         )}
                       </div>
                     </div>
@@ -357,9 +382,20 @@ export default function SpecialityPage({ params }) {
             )}
           </div>
         )}
+
       </div>
 
       <Footer />
+    </div>
+  );
+}
+
+// ── Reusable empty state ───────────────────────────────────────────────────────
+function EmptyState({ emoji, message }) {
+  return (
+    <div className="text-center py-20 bg-white rounded-2xl shadow">
+      <div className="text-5xl mb-4">{emoji}</div>
+      <p className="text-gray-500 text-lg">{message}</p>
     </div>
   );
 }

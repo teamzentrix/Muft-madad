@@ -140,10 +140,7 @@ const getAllTreatmentService = async () => {
 const getTreatmentBySpecialtyIdService = async (specialty_id) => {
   const query = `SELECT * FROM treatments WHERE specialty_id = $1;`;
   const result = await pool.query(query, [specialty_id]);
-  if (result.rows.length === 0) {
-    throw new Error('Treatment not found');
-  }
-  return result.rows[0]; // ✅ return object, not array
+  return result.rows; // ✅ returns all, empty array if none
 };
 
 module.exports = { createTreatmentService, getAllTreatmentService, getTreatmentBySpecialtyIdService }

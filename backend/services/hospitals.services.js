@@ -110,6 +110,24 @@ const getAllHospitalsService = async () => {
     return result.rows;
 };
 
+// ADD this new function to your existing hospital.services.js
+// Place it after getAllHospitalsService
+
+const getHospitalsBySpecialityService = async (specialityName) => {
+    const query = `
+        SELECT * FROM hospitals
+        WHERE deleted_at IS NULL
+          AND is_active = true
+          AND $1 = ANY(available_specialities)
+        ORDER BY created_at DESC
+    `;
+    const result = await pool.query(query, [specialityName]);
+    return result.rows;
+};
+
+// Also add it to module.exports:
+// getHospitalsBySpecialityService,
+
 const getHospitalBySlugService = async (slug) => {
     const query = `SELECT * FROM hospitals WHERE slug = $1 AND deleted_at IS NULL`;
     const result = await pool.query(query, [slug]);
@@ -231,4 +249,5 @@ module.exports = {
     addGalleryImagesService,
     removeGalleryImageService,
     getGalleryImagesService,
+    getHospitalsBySpecialityService,
 };
