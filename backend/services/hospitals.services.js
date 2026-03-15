@@ -203,6 +203,18 @@ const updateHospitalService = async (id, data) => {
     return result.rows[0] || null;
 };
 
+const getHospitalsByTreatmentService = async (treatmentName) => {
+    const query = `
+        SELECT * FROM hospitals
+        WHERE deleted_at IS NULL
+          AND is_active = true
+          AND $1 = ANY(available_treatments)
+        ORDER BY created_at DESC
+    `;
+    const result = await pool.query(query, [treatmentName]);
+    return result.rows;
+};
+
 const addGalleryImagesService = async (id, newImages) => {
     const query = `
         UPDATE hospitals
@@ -250,4 +262,5 @@ module.exports = {
     removeGalleryImageService,
     getGalleryImagesService,
     getHospitalsBySpecialityService,
+    getHospitalsByTreatmentService
 };
