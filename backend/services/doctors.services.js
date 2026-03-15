@@ -155,6 +155,11 @@ const getAllDoctors = async (filters = {}, page = 1, limit = 10) => {
         conditions.push(`is_verified = $${p++}`);
         values.push(filters.is_verified === 'true');
     }
+   // ✅ Case-insensitive JSONB search:
+if (filters.hospital) {
+    conditions.push(`LOWER(serving_in_hospitals::text) LIKE $${p++}`);
+    values.push(`%${filters.hospital.toLowerCase()}%`);
+}
 
     const where = conditions.join(' AND ');
     const countResult = await pool.query(`SELECT COUNT(*) FROM doctors WHERE ${where}`, values);

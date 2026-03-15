@@ -9,7 +9,8 @@ const {
     addGalleryImagesService,
     removeGalleryImageService,
     getGalleryImagesService,
-    getHospitalsBySpecialityService
+    getHospitalsBySpecialityService,
+    getHospitalsByTreatmentService,
 } = require('../services/hospitals.services');
 
 const createHospitalController = async (req, res) => {
@@ -71,16 +72,24 @@ const getAllHospitalsController = async (req, res) => {
 
 const getHospitalsBySpeciality = async (req, res) => {
     try {
-        const { specialty } = req.query;
+        const { specialty, treatment } = req.query;
  
-        if (!specialty) {
-            // No filter — return all hospitals
-            const hospitals = await getAllHospitalsService();
+        if (treatment) {
+            // Filter by treatment name (available_treatments array)
+            const hospitals = await getHospitalsByTreatmentService(treatment);
             return res.status(200).json({ success: true, data: hospitals });
         }
  
-        const hospitals = await getHospitalsBySpecialityService(specialty);
+        if (specialty) {
+            // Filter by specialty name (available_specialities array)
+            const hospitals = await getHospitalsBySpecialityService(specialty);
+            return res.status(200).json({ success: true, data: hospitals });
+        }
+ 
+        // No filter — return all
+        const hospitals = await getAllHospitalsService();
         return res.status(200).json({ success: true, data: hospitals });
+ 
     } catch (error) {
         return res.status(500).json({ success: false, message: error.message });
     }

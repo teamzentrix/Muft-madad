@@ -18,8 +18,8 @@ const createDoctor = async (req, res) => {
 
 const getAllDoctors = async (req, res) => {
     try {
-        const { page = 1, limit = 10, city, specialty, is_active, is_verified } = req.query;
-        const filters = { city, specialty, is_active, is_verified };
+        const { page = 1, limit = 10, city, specialty, hospital, is_active, is_verified } = req.query;
+        const filters = { city, specialty, hospital: hospital?.toLowerCase(), is_active, is_verified };
         const result = await doctorsService.getAllDoctors(filters, parseInt(page), parseInt(limit));
         return res.status(200).json({
             success: true,

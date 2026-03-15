@@ -329,6 +329,7 @@ function EmptyState({ icon, message }) {
   );
 }
 
+
 const styles = `
   @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display&display=swap');
 
@@ -513,7 +514,7 @@ const styles = `
     padding: 3px 9px; border-radius: 99px;
   }
   .meta-green { color: var(--green); }
-  .card-btn {`
+  .card-btn {
     margin-top: 4px; font-family: inherit; font-size: 13px; font-weight: 500;
     color: var(--accent); background: var(--accent-light);
     border: none; border-radius: 8px; padding: 9px 16px;
