@@ -435,6 +435,7 @@ const AdminHospitalForm = () => {
         address: '', city: '', state: '', pincode: '', country: '',
         location: null, about: '', timing_display: '',
         certifications: [], available_specialities: [],
+        available_treatments: [],
         gallery_images: [], available_services: [],
         total_doctors: 0, total_specialities: 0,
         is_verified: false, is_active: true,
@@ -448,7 +449,7 @@ const AdminHospitalForm = () => {
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState({ type: '', text: '' });
     const [submitDetails, setSubmitDetails] = useState(null); // { hospitalOk, doctorsOk, doctorsFailed }
-    const [localArrayInputs, setLocalArrayInputs] = useState({ certifications: '', available_specialities: '' });
+    const [localArrayInputs, setLocalArrayInputs] = useState({ certifications: '', available_specialities: '', available_treatments: '', });
     const [galleryUrlInput, setGalleryUrlInput] = useState('');
 
     // ── Doctor state ────────────────────────────────────────────────────────
@@ -880,6 +881,25 @@ const AdminHospitalForm = () => {
                                             placeholder="Cardiology, Neurology, Orthopedics"
                                             className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all" />
                                     </div>
+                                    {/* ← ADD THIS BLOCK RIGHT AFTER */}
+<div>
+    <label className="block text-sm font-semibold text-gray-700 mb-2">
+        Treatments Available <span className="text-xs text-gray-400">(comma-separated)</span>
+    </label>
+    <input
+        type="text"
+        value={localArrayInputs.available_treatments}
+        onChange={e => handleArrayInputChange(e, 'available_treatments')}
+        onBlur={() => handleArrayInputBlur('available_treatments')}
+        placeholder="Cataract, Total Knee Replacement, Endocrinology"
+        className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+    />
+    {formData.available_treatments.length > 0 && (
+        <p className="mt-1 text-xs text-blue-600">
+            Saved: {formData.available_treatments.join(', ')}
+        </p>
+    )}
+</div>
                                     <div>
                                         <label className="block text-sm font-semibold text-gray-700 mb-3">Services Available</label>
                                         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 bg-blue-50 p-4 rounded-lg border-2 border-blue-200">

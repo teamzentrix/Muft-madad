@@ -39,6 +39,7 @@ const createHospitalService = async (data) => {
         certifications,
         available_specialities,
         available_services,
+        available_treatments,
         gallery_images,
         total_doctors,
         total_specialities,
@@ -51,56 +52,55 @@ const createHospitalService = async (data) => {
     const pointValue = toPoint(location); // null or "(lat,lng)" string
 
     const query = `
-        INSERT INTO hospitals (
-            uuid, name, photo, slug, phone, email,
-            address, city, state, pincode, country, location,
-            about, timing_display, certifications,
-            available_specialities, available_treatments, available_services, gallery_images,
-            total_doctors, total_specialities,
-            is_verified, is_active, meta_title, meta_description,
-            created_at, updated_at
-        )
-        VALUES (
-            $1,  $2,  $3,  $4,  $5,  $6,
-            $7,  $8,  $9,  $10, $11,
-            ${pointValue ? `point($12)` : `$12`},
-            $13, $14, $15,
-            $16, $17, $18,
-            $19_new,
-            $19, $20,
-            $21, $22, $23, $24,
-            NOW(), NOW()
-        )
-        RETURNING *
-    `;
+    INSERT INTO hospitals (
+        uuid, name, photo, slug, phone, email,
+        address, city, state, pincode, country, location,
+        about, timing_display, certifications,
+        available_specialities, available_treatments, available_services, gallery_images,
+        total_doctors, total_specialities,
+        is_verified, is_active, meta_title, meta_description,
+        created_at, updated_at
+    )
+    VALUES (
+        $1,  $2,  $3,  $4,  $5,  $6,
+        $7,  $8,  $9,  $10, $11,
+        ${pointValue ? `point($12)` : `$12`},
+        $13, $14, $15,
+        $16, $17, $18, $19,
+        $20, $21,
+        $22, $23, $24, $25,
+        NOW(), NOW()
+    )
+    RETURNING *
+`;
 
     const values = [
-        uuid || uuidv4(),                              // $1
-        name,                                          // $2
-        photo || null,                                 // $3
-        slug,                                          // $4
-        phone,                                         // $5
-        email,                                         // $6
-        address,                                       // $7
-        city,                                          // $8
-        state,                                         // $9
-        pincode || null,                               // $10
-        country,                                       // $11
-        pointValue,                                    // $12 — null or "(lat,lng)"
-        about || null,                                 // $13
-        timing_display || null,                        // $14
-        certifications || [],                          // $15  text[]
-        available_specialities || [],                  // $16  text[]
-        available_treatments || [],
-        available_services || [],                      // $17  text[]
-        gallery_images || [],                          // $18  text[]
-        total_doctors || 0,                            // $19
-        total_specialities || 0,                       // $20
-        is_verified || false,                          // $21
-        is_active !== undefined ? is_active : true,    // $22
-        meta_title || null,                            // $23
-        meta_description || null,                      // $24
-    ];
+    uuid || uuidv4(),                               // $1
+    name,                                           // $2
+    photo || null,                                  // $3
+    slug,                                           // $4
+    phone,                                          // $5
+    email,                                          // $6
+    address,                                        // $7
+    city,                                           // $8
+    state,                                          // $9
+    pincode || null,                                // $10
+    country,                                        // $11
+    pointValue,                                     // $12
+    about || null,                                  // $13
+    timing_display || null,                         // $14
+    certifications || [],                           // $15
+    available_specialities || [],                   // $16
+    available_treatments || [],                     // $17
+    available_services || [],                       // $18
+    gallery_images || [],                           // $19
+    total_doctors || 0,                             // $20
+    total_specialities || 0,                        // $21
+    is_verified || false,                           // $22
+    is_active !== undefined ? is_active : true,     // $23
+    meta_title || null,                             // $24
+    meta_description || null,                       // $25
+];
 
     const result = await pool.query(query, values);
     return result.rows[0];
