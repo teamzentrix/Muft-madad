@@ -11,6 +11,7 @@ const AddTreatment = require("./routes/treatments.routes");
 const hospitalRoutes = require("./routes/hospitals.routes");
 const doctorsRoutes = require("./routes/doctors.routes");
 const specialitiesRoutes = require('./routes/specialities.routes');
+const blogsRoutes = require('./routes/blogs.routes');
 
 const PORT = process.env.PORT || 4000;
 const app = express();
@@ -46,6 +47,7 @@ app.use("/api/doctors", doctorsRoutes);
 app.use("/api/users/", userReviewRoutes);
 app.use("/api/admin/", AddTreatment);
 app.use('/api/specialities', specialitiesRoutes);
+app.use('/api/blogs', blogsRoutes);
 
 // 5. Start
 app.listen(PORT, () => {

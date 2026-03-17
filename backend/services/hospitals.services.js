@@ -55,7 +55,7 @@ const createHospitalService = async (data) => {
             uuid, name, photo, slug, phone, email,
             address, city, state, pincode, country, location,
             about, timing_display, certifications,
-            available_specialities, available_services, gallery_images,
+            available_specialities, available_treatments, available_services, gallery_images,
             total_doctors, total_specialities,
             is_verified, is_active, meta_title, meta_description,
             created_at, updated_at
@@ -66,6 +66,7 @@ const createHospitalService = async (data) => {
             ${pointValue ? `point($12)` : `$12`},
             $13, $14, $15,
             $16, $17, $18,
+            $19_new,
             $19, $20,
             $21, $22, $23, $24,
             NOW(), NOW()
@@ -90,6 +91,7 @@ const createHospitalService = async (data) => {
         timing_display || null,                        // $14
         certifications || [],                          // $15  text[]
         available_specialities || [],                  // $16  text[]
+        available_treatments || [],
         available_services || [],                      // $17  text[]
         gallery_images || [],                          // $18  text[]
         total_doctors || 0,                            // $19
@@ -105,7 +107,20 @@ const createHospitalService = async (data) => {
 };
 
 const getAllHospitalsService = async () => {
-    const query = `SELECT * FROM hospitals WHERE deleted_at IS NULL ORDER BY created_at DESC`;
+    const query = `
+        SELECT 
+            h.*,
+            -- Count real doctors serving at this hospital
+            (SELECT COUNT(*) FROM doctors d
+             WHERE LOWER(d.serving_in_hospitals::text) LIKE LOWER('%' || h.name || '%')
+             AND d.deleted_at IS NULL
+            )::int AS real_doctor_count,
+            -- Count real specialities from available_specialities array
+            COALESCE(array_length(h.available_specialities, 1), 0) AS real_speciality_count
+        FROM hospitals h
+        WHERE h.deleted_at IS NULL
+        ORDER BY h.created_at DESC
+    `;
     const result = await pool.query(query);
     return result.rows;
 };
@@ -138,6 +153,18 @@ const getHospitalByIdService = async (id) => {
     const query = `SELECT * FROM hospitals WHERE id = $1 AND deleted_at IS NULL`;
     const result = await pool.query(query, [id]);
     return result.rows[0] || null;
+};
+
+const getHospitalsByCityService = async (city) => {
+    const query = `
+        SELECT * FROM hospitals
+        WHERE deleted_at IS NULL
+          AND is_active = true
+          AND city ILIKE $1
+        ORDER BY created_at DESC
+    `;
+    const result = await pool.query(query, [`%${city}%`]);
+    return result.rows;
 };
 
 const updateHospitalService = async (id, data) => {
@@ -262,5 +289,6 @@ module.exports = {
     removeGalleryImageService,
     getGalleryImagesService,
     getHospitalsBySpecialityService,
-    getHospitalsByTreatmentService
+    getHospitalsByTreatmentService,
+    getHospitalsByCityService
 };

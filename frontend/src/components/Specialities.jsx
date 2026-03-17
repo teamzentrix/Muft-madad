@@ -18,7 +18,6 @@ export default function OurSpecialities() {
         const res = await axios.get('http://localhost:4000/api/specialities', {
           withCredentials: true,
         });
-        // res.data.data is the array from getAllSpecialitiesService
         setSpecialities(res.data.data || []);
       } catch (err) {
         setError('Failed to load specialities');
@@ -30,7 +29,6 @@ export default function OurSpecialities() {
   }, []);
 
   const handleSpecialityClick = (speciality) => {
-    // Pass the DB id so the speciality page can fetch treatments/doctors/hospitals
     router.push(`/speciality/${speciality.id}?lang=${lang}`);
   };
 
@@ -47,11 +45,11 @@ export default function OurSpecialities() {
   );
 
   return (
-    <div className="pb-14 pt-0 lg:pt-14 px-4 sm:px-6 lg:px-8">
+    <div className="pb-10 pt-0 lg:pt-10 px-4 sm:px-6 lg:px-8">
       <div className="h-20 sm:h-24 md:h-28 lg:hidden"></div>
       <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-12 sm:mb-16 lg:mb-20">
-          <h1 className="text-3xl md:text-4xl lg:text-5xl uppercase font-medium font-serif bg-linear-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent mb-6">
+        <div className="text-center mb-8 sm:mb-10 lg:mb-12">
+          <h1 className="text-3xl md:text-4xl lg:text-5xl uppercase font-medium font-serif bg-linear-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent mb-3">
             {pageTitle}
           </h1>
           <p className="text-md md:text-xl text-gray-600 max-w-3xl mx-auto">
@@ -61,35 +59,39 @@ export default function OurSpecialities() {
           </p>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
           {specialities.map((speciality) => (
             <div
               key={speciality.id}
-              className="group bg-white/90 backdrop-blur-sm rounded-2xl border border-white/50 hover:border-blue-200 overflow-hidden shadow-lg hover:shadow-xl transition-all duration-500 hover:-translate-y-2 hover:scale-[1.02]"
+              className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300"
             >
-              <div className="relative overflow-hidden h-32 sm:h-36 lg:h-40">
+              {/* Image */}
+              <div className="w-full h-28 sm:h-32 overflow-hidden">
                 <img
                   src={speciality.image}
                   alt={lang === 'en' ? speciality.name_en : speciality.name_hi}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                  className="w-full h-full object-cover"
                 />
-                <div className="absolute inset-0 bg-linear-to-t from-black/20 to-transparent"></div>
               </div>
-              <div className="p-4 sm:p-5 lg:p-6">
-                <h3 className="text-base sm:text-lg lg:text-xl font-medium text-gray-900 mb-2 sm:mb-3 group-hover:text-blue-600 transition-colors">
+
+              {/* Content */}
+              <div className="p-3">
+                {/* Title - centered and bold */}
+                <h3 className="text-sm sm:text-base font-bold text-gray-900 text-center mb-1.5">
                   {lang === 'en' ? speciality.name_en : speciality.name_hi}
                 </h3>
-                <p className="text-xs sm:text-sm text-gray-600 leading-relaxed mb-3 sm:mb-4 line-clamp-2">
+
+                {/* Description */}
+                <p className="text-xs text-gray-600 leading-relaxed mb-2 line-clamp-3">
                   {lang === 'en' ? speciality.description_en : speciality.description_hi}
                 </p>
+
+                {/* Know more link */}
                 <button
                   onClick={() => handleSpecialityClick(speciality)}
-                  className="w-full group/btn flex items-center justify-center gap-1.5 bg-linear-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-2 px-4 rounded-xl text-xs sm:text-sm shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer"
+                  className="text-xs text-blue-600 hover:text-blue-800 hover:underline font-medium cursor-pointer bg-transparent border-none p-0"
                 >
-                  <span>{lang === 'en' ? 'Learn More' : 'विस्तार से जानें'}</span>
-                  <svg className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                  </svg>
+                  {lang === 'en' ? 'know more' : 'विस्तार से जानें'}
                 </button>
               </div>
             </div>

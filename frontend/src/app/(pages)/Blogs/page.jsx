@@ -1,244 +1,163 @@
-'use client';
-import React from 'react';
-import { Clock, User, ArrowRight, Calendar } from 'lucide-react';
-import Image from 'next/image';
+"use client";
+import React, { useState, useEffect } from 'react';
+import { Clock, Calendar, ArrowRight, RefreshCw } from 'lucide-react';
+import { useLanguage } from '@/context/languageContext';
+import { useRouter } from 'next/navigation';
+import axios from 'axios';
 
-const BlogCard = ({ blog }) => {
-  return (
-    <div className="group bg-white rounded-lg overflow-hidden border border-gray-200 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
-      {/* Blog Image */}
-      <div className="relative h-32 w-full overflow-hidden bg-gray-100">
-        {blog.image ? (
-          <Image
-            src={blog.image}
-            alt={blog.title}
-            fill
-            className="object-cover group-hover:scale-105 transition-transform duration-300"
-          />
-        ) : (
-          <div className="w-full h-full bg-linear-to-br from-blue-100 to-purple-100" />
-        )}
-        {/* Category Badge */}
-        {blog.category && (
-          <div className="absolute top-2 left-2">
-            <span className="bg-blue-600 text-white text-xs px-2 py-1 rounded-md font-medium">
-              {blog.category}
-            </span>
-          </div>
-        )}
-      </div>
+const API = 'http://localhost:4000/api';
 
-      {/* Content */}
-      <div className="p-4">
-        {/* Title */}
-        <h3 className="text-sm font-bold text-gray-900 mb-2 line-clamp-2 group-hover:text-blue-600 transition-colors leading-tight">
-          {blog.title}
-        </h3>
-
-        {/* Description */}
-        <p className="text-xs text-gray-600 mb-3 line-clamp-2 leading-relaxed">
-          {blog.description}
-        </p>
-
-        {/* Meta Info */}
-        <div className="flex items-center justify-between text-xs text-gray-500 pt-3 border-t border-gray-100">
-          <div className="flex items-center gap-1">
-            <div className="w-5 h-5 rounded-full bg-gray-200 overflow-hidden shrink-0">
-              {blog.authorImage ? (
-                <Image
-                  src={blog.authorImage}
-                  alt={blog.author}
-                  width={20}
-                  height={20}
-                  className="object-cover"
-                />
-              ) : (
-                <User className="w-3 h-3 m-1 text-gray-500" />
-              )}
+/* ── Skeleton ─────────────────────────────────────────────────────────── */
+const SkeletonCard = () => (
+    <div className="bg-white rounded-lg shadow-md overflow-hidden animate-pulse">
+        <div className="h-48 bg-gray-200" />
+        <div className="p-5 space-y-3">
+            <div className="h-4 bg-gray-200 rounded w-3/4" />
+            <div className="h-4 bg-gray-100 rounded w-1/2" />
+            <div className="flex gap-4">
+                <div className="h-3 bg-gray-100 rounded w-20" />
+                <div className="h-3 bg-gray-100 rounded w-20" />
             </div>
-            <span className="truncate">{blog.author}</span>
-          </div>
-          <div className="flex items-center gap-1 shrink-0">
-            <Clock className="w-3 h-3" />
-            <span>{blog.readTime}</span>
-          </div>
+            <div className="h-3 bg-gray-200 rounded w-16" />
         </div>
-      </div>
     </div>
-  );
-};
+);
 
-export default function BlogSection() {
-  const blogs = [
-    {
-      id: 1,
-      title: "Mastering UI Elements: A Practical Guide for Designers",
-      description: "Dive into the world of user interfaces with our expert guides, latest trends, and practical tips.",
-      image: "/blogs/ui-elements.jpg",
-      author: "Jennifer Taylor",
-      authorImage: "/authors/jennifer.jpg",
-      readTime: "3 min read",
-      category: "Design",
-      date: "Nov 15, 2024"
-    },
-    {
-      id: 2,
-      title: "Crafting Seamless Experiences: The Art of Intuitive UI Design",
-      description: "Explore the principles and techniques that drive user-centric UI design, ensuring a seamless and intuitive experience.",
-      image: "/blogs/seamless-ux.jpg",
-      author: "Jennifer Taylor",
-      authorImage: "/authors/jennifer.jpg",
-      readTime: "5 min read",
-      category: "UX Design",
-      date: "Nov 14, 2024"
-    },
-    {
-      id: 3,
-      title: "Beyond Aesthetics: The Power of Emotional UX Design",
-      description: "Delve into the realm of emotional design and discover how incorporating empathy and psychology can elevate user experiences.",
-      image: "/blogs/emotional-ux.jpg",
-      author: "Ryan A.",
-      authorImage: "/authors/ryan.jpg",
-      readTime: "2 min read",
-      category: "Psychology",
-      date: "Nov 13, 2024"
-    },
-    {
-      id: 4,
-      title: "The Future of Healthcare Technology: AI and Machine Learning",
-      description: "Discover how artificial intelligence is transforming patient care and medical diagnostics in modern healthcare.",
-      image: "/blogs/healthcare-ai.jpg",
-      author: "Dr. Sarah Chen",
-      authorImage: "/authors/sarah.jpg",
-      readTime: "4 min read",
-      category: "Technology",
-      date: "Nov 12, 2024"
-    },
-    {
-      id: 5,
-      title: "Patient-Centric Care: Building Trust Through Communication",
-      description: "Learn effective strategies for improving doctor-patient relationships and enhancing healthcare outcomes.",
-      image: "/blogs/patient-care.jpg",
-      author: "Michael Brown",
-      authorImage: "/authors/michael.jpg",
-      readTime: "6 min read",
-      category: "Healthcare",
-      date: "Nov 11, 2024"
-    },
-    {
-      id: 6,
-      title: "Telemedicine Revolution: Accessing Healthcare from Anywhere",
-      description: "Explore how virtual consultations are making healthcare more accessible and convenient for patients worldwide.",
-      image: "/blogs/telemedicine.jpg",
-      author: "Emily Watson",
-      authorImage: "/authors/emily.jpg",
-      readTime: "3 min read",
-      category: "Innovation",
-      date: "Nov 10, 2024"
-    },
-    {
-      id: 7,
-      title: "Understanding Preventive Healthcare: Your Guide to Wellness",
-      description: "Essential tips and strategies for maintaining optimal health through preventive care and regular check-ups.",
-      image: "/blogs/preventive-care.jpg",
-      author: "Dr. James Miller",
-      authorImage: "/authors/james.jpg",
-      readTime: "5 min read",
-      category: "Wellness",
-      date: "Nov 09, 2024"
-    },
-    {
-      id: 8,
-      title: "Mental Health Matters: Breaking the Stigma",
-      description: "An in-depth look at mental health awareness and the importance of seeking professional support.",
-      image: "/blogs/mental-health.jpg",
-      author: "Lisa Anderson",
-      authorImage: "/authors/lisa.jpg",
-      readTime: "4 min read",
-      category: "Mental Health",
-      date: "Nov 08, 2024"
-    },
-    {
-      id: 9,
-      title: "Nutrition and Health: Eating Your Way to Better Wellness",
-      description: "Comprehensive guide to understanding nutrition's role in disease prevention and overall health.",
-      image: "/blogs/nutrition.jpg",
-      author: "Chef Maria Garcia",
-      authorImage: "/authors/maria.jpg",
-      readTime: "7 min read",
-      category: "Nutrition",
-      date: "Nov 07, 2024"
-    },
-    {
-      id: 10,
-      title: "Exercise as Medicine: The Science Behind Physical Activity",
-      description: "Discover the proven benefits of regular exercise and how it impacts your physical and mental health.",
-      image: "/blogs/exercise.jpg",
-      author: "Coach David Lee",
-      authorImage: "/authors/david.jpg",
-      readTime: "5 min read",
-      category: "Fitness",
-      date: "Nov 06, 2024"
-    }
-  ];
-
-  const [currentPage, setCurrentPage] = React.useState(0);
-  const blogsPerPage = 5;
-  const totalPages = Math.ceil(blogs.length / blogsPerPage);
-
-  const displayedBlogs = blogs.slice(
-    currentPage * blogsPerPage,
-    (currentPage + 1) * blogsPerPage
-  );
-
-  return (
-    <section className="py-12 px-4 bg-linear-to-b from-gray-50 to-white">
-      <div className="max-w-[1600px] mx-auto">
-        {/* Section Header */}
-        <div className="mb-10">
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">
-            Latest Articles & Insights
-          </h2>
-          <p className="text-gray-600">
-            Stay updated with expert advice, health tips, and industry trends
-          </p>
-          <div className="h-1 w-20 bg-blue-600 rounded-full mt-4"></div>
+/* ── Blog Card ────────────────────────────────────────────────────────── */
+const BlogCard = ({ blog, lang, onClick }) => (
+    <div
+        onClick={onClick}
+        className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer"
+    >
+        <div className="relative">
+            <img
+                src={blog.bg_image || 'https://images.unsplash.com/photo-1584515933487-779824d29309?w=800&q=80'}
+                alt={blog.title}
+                className="w-full h-48 object-cover"
+                loading="lazy"
+            />
+            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-r from-blue-900 to-purple-900 text-white text-center py-2 text-sm font-semibold">
+                {lang === 'en' ? '#Just One Call 88569-88569' : '#बसएककॉल 88569-88569'}
+            </div>
+            {blog.tag && (
+                <div className="absolute top-2 left-2 bg-blue-600 text-white text-xs font-semibold px-2 py-1 rounded-full">
+                    {blog.tag}
+                </div>
+            )}
         </div>
-
-        {/* Blog Grid - 5 columns */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-8">
-          {displayedBlogs.map((blog) => (
-            <BlogCard key={blog.id} blog={blog} />
-          ))}
+        <div className="p-5">
+            <h3 className="text-lg font-bold text-gray-800 mb-3 line-clamp-2">{blog.title}</h3>
+            {blog.subtitle && (
+                <p className="text-sm text-gray-500 mb-3 line-clamp-2">{blog.subtitle}</p>
+            )}
+            <div className="flex items-center gap-4 text-sm text-gray-600 mb-2">
+                {blog.read_time && (
+                    <div className="flex items-center gap-1">
+                        <Clock size={14} />
+                        <span>{blog.read_time}</span>
+                    </div>
+                )}
+                {blog.author && (
+                    <span className="text-xs text-gray-400">by {blog.author}</span>
+                )}
+            </div>
+            {blog.publish_date && (
+                <div className="flex items-center gap-1 text-sm text-gray-600 mb-4">
+                    <Calendar size={14} />
+                    <span>{blog.publish_date}</span>
+                </div>
+            )}
+            <button className="text-blue-600 font-semibold hover:text-blue-800 transition-colors flex items-center gap-1 text-sm">
+                {lang === 'en' ? 'Read More' : 'और पढ़ें'}
+                <ArrowRight size={14} />
+            </button>
         </div>
+    </div>
+);
 
-        {/* Pagination */}
-        {totalPages > 1 && (
-          <div className="flex items-center justify-center gap-2">
-            {[...Array(totalPages)].map((_, index) => (
-              <button
-                key={index}
-                onClick={() => setCurrentPage(index)}
-                className={`px-3 py-1 rounded-md text-sm font-medium transition-all duration-200 ${
-                  index === currentPage
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'
-                }`}
-              >
-                {index + 1}
-              </button>
-            ))}
-          </div>
-        )}
+/* ── Main Component ───────────────────────────────────────────────────── */
+export default function MuftMadadBlogs() {
+    const { lang } = useLanguage();
+    const router = useRouter();
+    const [blogs, setBlogs] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
 
-        {/* View All Button */}
-        <div className="flex justify-center mt-8">
-          <button className="group bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg transition-all duration-200 flex items-center gap-2">
-            View All Articles
-            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-          </button>
+    useEffect(() => {
+        const fetchBlogs = async () => {
+            setLoading(true);
+            setError('');
+            try {
+                const res = await axios.get(`${API}/blogs`);
+                const data = res.data?.data || [];
+                setBlogs(Array.isArray(data) ? data : []);
+            } catch {
+                setError('Failed to load blogs.');
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchBlogs();
+    }, []);
+
+    const titleText  = lang === 'en' ? 'Latest Blogs'    : 'ब्लॉग्स';
+    const buttonText = lang === 'en' ? 'See More Blogs'  : 'और ब्लॉग देखें';
+
+    // Show max 4 on homepage
+    const visibleBlogs = blogs.slice(0, 4);
+
+    return (
+        <div className="py-12 px-4 sm:px-6 lg:px-8">
+            <div className="max-w-7xl mx-auto">
+                <h1 className="text-3xl md:text-4xl lg:text-5xl uppercase font-medium font-serif text-gray-900 mb-12 text-center">
+                    {titleText}
+                </h1>
+
+                {/* Loading */}
+                {loading && (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-12">
+                        {[...Array(4)].map((_, i) => <SkeletonCard key={i} />)}
+                    </div>
+                )}
+
+                {/* Error */}
+                {!loading && error && (
+                    <div className="text-center py-10 text-gray-400 text-sm">{error}</div>
+                )}
+
+                {/* Empty */}
+                {!loading && !error && blogs.length === 0 && (
+                    <div className="text-center py-10 text-gray-400 text-sm">
+                        {lang === 'en' ? 'No blogs published yet.' : 'अभी कोई ब्लॉग प्रकाशित नहीं है।'}
+                    </div>
+                )}
+
+                {/* Blogs Grid */}
+                {!loading && !error && visibleBlogs.length > 0 && (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-12">
+                        {visibleBlogs.map((blog) => (
+                            <BlogCard
+                                key={blog.id || blog.uuid}
+                                blog={blog}
+                                lang={lang}
+                                onClick={() => router.push(`/blogs/${blog.slug}`)}
+                            />
+                        ))}
+                    </div>
+                )}
+
+                {/* See More */}
+                {/* {!loading && blogs.length > 4 && (
+                    <div className="flex justify-center">
+                        <button
+                            onClick={() => router.push('/blogs')}
+                            className="bg-blue-900 hover:bg-blue-800 text-white px-8 py-3 rounded-lg font-semibold transition-all duration-300 shadow-md hover:shadow-lg flex items-center gap-2">
+                            {buttonText}
+                            <ArrowRight size={16} />
+                        </button>
+                    </div>
+                )} */}
+            </div>
         </div>
-      </div>
-    </section>
-  );
+    );
 }

@@ -65,14 +65,39 @@ try {
                     }),
                 ]);
 
-                if (hospRes.status === 'fulfilled') {
-                    const d = hospRes.value.data;
-                    setHospitals(Array.isArray(d) ? d : (d?.data || []));
-                }
-                if (docRes.status === 'fulfilled') {
-                    const d = docRes.value.data;
-                    setDoctors(Array.isArray(d) ? d : (d?.data || []));
-                }
+                // After fetching hospitals:
+if (hospRes.status === 'fulfilled') {
+    const d = hospRes.value.data;
+    const hospList = Array.isArray(d) ? d : (d?.data || []);
+    setHospitals(hospList);
+
+    // ✅ Fetch doctors only from these specific hospitals
+    if (hospList.length > 0) {
+        const doctorPromises = hospList.slice(0, 3).map(h =>
+            axios.get(`${API}/doctors?hospital=${encodeURIComponent(h.name)}`, { withCredentials: true })
+                .then(r => r.data?.data || [])
+                .catch(() => [])
+        );
+        const docArrays = await Promise.all(doctorPromises);
+        // Deduplicate by uuid
+        const allDocs = docArrays.flat();
+        const unique = allDocs.filter((doc, i, arr) =>
+            arr.findIndex(d => d.uuid === doc.uuid) === i
+        );
+        setDoctors(unique);
+    }
+}
+
+// ✅ Remove the separate docRes fetch entirely
+
+                // if (hospRes.status === 'fulfilled') {
+                //     const d = hospRes.value.data;
+                //     setHospitals(Array.isArray(d) ? d : (d?.data || []));
+                // }
+                // if (docRes.status === 'fulfilled') {
+                //     const d = docRes.value.data;
+                //     setDoctors(Array.isArray(d) ? d : (d?.data || []));
+                // }
 
             } catch (err) {
                 setError(err.response?.data?.message || 'Failed to load treatment data.');
