@@ -1,8 +1,8 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Phone } from 'lucide-react';
-import { useLanguage } from '@/context/languageContext';  // ✅ Your path
+import { useLanguage } from '@/context/languageContext';
 import { useParams } from 'next/navigation';
 import Navbar from '@/components/Navbar';
 import HospitalsSection from '@/components/hospitals';
@@ -10,149 +10,139 @@ import MedicalTreatmentsPage from '@/components/Treatments';
 import DoctorsSection from '@/components/doctors';
 import MuftMadadBlogs from '@/components/Blogs';
 import DynamicTestimonialSection from '@/components/dynamicTestimonials';
+import Footer from '@/components/Footer';
+
+// ✅ Hindi city name → English mapping
+const cityTranslation = {
+  "मुरादाबाद": "Moradabad",
+  "चंदौसी":    "Chandausi",
+  "अमरोहा":    "Amroha",
+  "बिलारी":    "Bilari",
+};
 
 const HeroContent = () => {
-    const { lang } = useLanguage();
-    const params = useParams();
+  const { lang } = useLanguage();
+  const params = useParams();
 
-    // ✅ EXACT SAME LOGIC FROM YOUR WORKING CITYPAGE
-    const cityFromUrl = params?.city
-        ? decodeURIComponent(params.city)
-        : "मुरादाबाद";
+  // Decode URL param — could be Hindi or English
+  const cityFromUrl = params?.city
+    ? decodeURIComponent(params.city)
+    : "मुरादाबाद";
 
-    // ✅ Local state like your CityPage (fixes SSR issue)
-    const [selectedCity, setSelectedCity] = React.useState(cityFromUrl);
+  const [selectedCity] = useState(cityFromUrl);
 
-    // ✅ EXACT SAME CITY TRANSLATION FROM YOUR CITYPAGE
-    const cityTranslation = {
-        "मुरादाबाद": "Moradabad",
-        "चंदौसी": "Chandausi",
-        "अमरोहा": "Amroha",
-        "बिलारी": "Bilari"
-    };
+  // ✅ Always get English city name for API calls
+  const englishCity = cityTranslation[selectedCity] || selectedCity;
 
-    // ✅ EXACT SAME getTranslatedCity() FUNCTION FROM YOUR CITYPAGE
-    const getTranslatedCity = () => {
-        return lang === 'en' ? cityTranslation[selectedCity] : selectedCity;
-    };
+  // ✅ Display name based on language
+  const displayCity = lang === 'en'
+    ? (cityTranslation[selectedCity] || selectedCity)
+    : selectedCity;
 
-    // ✅ HeroData using your proven logic
-    const HeroData = {
-        en: {
-            title: `Ayushman Bharat with Muft Madad`,
-            subtitle: `Get Yourself Treated in ${getTranslatedCity()} For Free`,
-            points: [
-                'Free OPD',
-                'Up to 60% discount on diagnostics',
-                'Ground level assistance by Muft Madad Saathi',
-                'Post-surgery care and support'
-            ],
-            button: 'Call Now'
-        },
-        hi: {
-            title: 'मुफ्त मदद के साथ अयुष्मान भारत',
-            subtitle: `${getTranslatedCity()} में अपना इलाज मुफ्त में करवाएं`,
-            points: [
-                'मुफ्त ओपीडी',
-                'डायग्नोस्टिक्स पर 60% तक की बचत',
-                'मुफ्त मदद साथी द्वारा जमीनी स्तर पर सहायता',
-                'सर्जरी के बाद देखभाल और सहायता'
-            ],
-            button: 'अभी कॉल करें'
-        }
-    };
+  const HeroData = {
+    en: {
+      title: `Ayushman Bharat with Muft Madad`,
+      subtitle: `Get Yourself Treated in ${englishCity} For Free`,
+      points: [
+        'Free OPD',
+        'Up to 60% discount on diagnostics',
+        'Ground level assistance by Muft Madad Saathi',
+        'Post-surgery care and support'
+      ],
+      button: 'Call Now'
+    },
+    hi: {
+      title: 'मुफ्त मदद के साथ अयुष्मान भारत',
+      subtitle: `${displayCity} में अपना इलाज मुफ्त में करवाएं`,
+      points: [
+        'मुफ्त ओपीडी',
+        'डायग्नोस्टिक्स पर 60% तक की बचत',
+        'मुफ्त मदद साथी द्वारा जमीनी स्तर पर सहायता',
+        'सर्जरी के बाद देखभाल और सहायता'
+      ],
+      button: 'अभी कॉल करें'
+    }
+  };
 
-    const content = HeroData[lang];
+  const content = HeroData[lang] || HeroData['hi'];
 
-    return (
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 pt-8 mt-20 lg:mt-26">
-            <Navbar />
-            <div className="grid lg:grid-cols-2 gap-8 sm:gap-10 md:gap-12 items-center">
-                {/* Left Content */}
-                <div className="space-y-6 sm:space-y-8">
-                    <h1 className="text-4xl font-serif font-medium uppercase text-gray-900 leading-tight tracking-widest">
-                        {content.title}
-                        <br />
-                        {content.subtitle.replace('{city}', <span className="text-red-600">{getTranslatedCity()}</span>)}
-                    </h1>
+  return (
+    <div>
+    <main className="max-w-7xl mx-auto px-4 sm:px-6 pt-8 mt-20 lg:mt-26">
+      <Navbar />
 
-                    <ul className="space-y-3 sm:space-y-4">
-                        {content.points.map((point, index) => (
-                            <li key={index} className="flex items-start gap-2 sm:gap-3">
-                                <span className="text-xl sm:text-2xl mt-1">▸</span>
-                                <span className="text-base sm:text-lg md:text-xl text-gray-700">{point}</span>
-                            </li>
-                        ))}
-                    </ul>
+      {/* ── Hero ── */}
+      <div className="grid lg:grid-cols-2 gap-8 sm:gap-10 md:gap-12 items-center">
+        <div className="space-y-6 sm:space-y-8">
+          <h1 className="text-4xl font-serif font-medium uppercase text-gray-900 leading-tight tracking-widest">
+            {content.title}
+            <br />
+            <span className="text-red-600">{displayCity}</span>
+            {' '}{lang === 'en' ? 'For Free' : 'में मुफ्त इलाज'}
+          </h1>
+          <ul className="space-y-3 sm:space-y-4">
+            {content.points.map((point, i) => (
+              <li key={i} className="flex items-start gap-2 sm:gap-3">
+                <span className="text-xl sm:text-2xl mt-1">▸</span>
+                <span className="text-base sm:text-lg md:text-xl text-gray-700">{point}</span>
+              </li>
+            ))}
+          </ul>
+          <a href="tel:+917088440387" className="w-full sm:w-auto">
+            <button className="flex cursor-pointer items-center gap-2 bg-green-700 hover:bg-green-600 text-white font-semibold px-6 sm:px-8 py-3 sm:py-4 rounded-md transition shadow-md text-base sm:text-lg w-full sm:w-auto justify-center">
+              <Phone className="w-4 h-4 sm:w-5 sm:h-5" />
+              <span>{content.button}</span>
+            </button>
+          </a>
+        </div>
+        <div className="relative mt-8 lg:mt-0">
+          <img src="/HeroImage.png" alt="Happy family"
+            className="w-full h-auto rounded-lg shadow-xl"
+            onError={(e) => { e.target.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="800" height="600"%3E%3Crect fill="%23e5e7eb" width="800" height="600"/%3E%3C/svg%3E'; }} />
+        </div>
+      </div>
 
-                    <a href="tel:+917088440387" className="w-full sm:w-auto">
-                        <button className="flex cursor-pointer items-center gap-2 bg-green-700 hover:bg-green-600 text-white font-semibold px-6 sm:px-8 py-3 sm:py-4 rounded-md transition shadow-md text-base sm:text-lg w-full sm:w-auto justify-center">
-                            <Phone className="w-4 h-4 sm:w-5 sm:h-5" />
-                            <span>{content.button}</span>
-                        </button>
-                    </a>
-                </div>
+      {/* ── About Section ── */}
+      <section className="bg-slate-700 text-white py-12 px-6 mt-12 rounded-2xl">
+        <div className="max-w-7xl mx-auto">
+          <h2 className="text-3xl font-bold mb-8 text-left">{englishCity}</h2>
+          <div className="space-y-6 text-lg leading-relaxed">
+            <p className="text-gray-100">
+              {lang === 'en'
+                ? `${englishCity} is one of the key cities where Muft Madad provides free healthcare services under Ayushman Bharat.`
+                : `${displayCity} उन प्रमुख शहरों में से एक है जहाँ मुफ्त मदद आयुष्मान भारत के अंतर्गत मुफ्त स्वास्थ्य सेवाएं प्रदान करता है।`}
+            </p>
+            <p className="text-gray-100">
+              {lang === 'en'
+                ? `We connect patients in ${englishCity} with verified hospitals, experienced doctors, and free treatments.`
+                : `हम ${displayCity} के मरीजों को सत्यापित अस्पतालों, अनुभवी डॉक्टरों और मुफ्त उपचार से जोड़ते हैं।`}
+            </p>
+          </div>
+        </div>
+      </section>
 
-                {/* Right Image */}
-                <div className="relative mt-8 lg:mt-0">
-                    <img
-                        src="/HeroImage.png"
-                        alt="Happy family"
-                        className="w-full h-auto rounded-lg shadow-xl"
-                        onError={(e) => {
-                            e.target.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="800" height="600"%3E%3Crect fill="%23e5e7eb" width="800" height="600"/%3E%3Ctext x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="24" fill="%239ca3af"%3EFamily Image%3C/text%3E%3C/svg%3E';
-                        }}
-                    />
-                </div>
-            </div>
+      {/* ✅ All sections now receive city in English for API filtering */}
 
+      {/* Hospitals — filtered by englishCity */}
+      <HospitalsSection city={englishCity} />
 
+      {/* Treatments — same for all cities (specialty based) */}
+      <MedicalTreatmentsPage />
 
-            {/* // ABOUT SECTION  DYNAMIC */}
+      {/* Doctors — filtered by englishCity */}
+      <DoctorsSection city={englishCity} />
 
+      {/* Blogs — same for all */}
+      <MuftMadadBlogs />
 
-            <section className="bg-slate-700 text-white py-12 px-6">
-                <div className="max-w-7xl mx-auto">
-                    <h2 className="text-3xl font-bold mb-8 text-left">
-                        moradabad
-                    </h2>
-                    <div className="space-y-6 text-lg leading-relaxed">
-                        <p className="text-gray-100">
-
-                            content line 1
-                        </p>
-                        <p className="text-gray-100">
-                            content line 2
-                        </p>
-                    </div>
-                </div>
-            </section>
-
-
-            {/* HOSPITALS SECTION DYNAMIC SORT CITY NAME */}
-            <HospitalsSection />
-
-            {/* Treatment Section */}
-            <MedicalTreatmentsPage />
-
-            {/* DOCTORS SECTION DYNAMIC SORT CITY NAME */}
-
-            <DoctorsSection />
-
-            {/* BLOGS DYNAMIC BUT SAME FOR ALL */}
-
-            <MuftMadadBlogs />
-
-             {/* Dynamic Testimonial same for all */}
-             
-            <DynamicTestimonialSection />
-
-
-
-        </main>
-
-
-    );
+      {/* Testimonials — filtered by englishCity */}
+      <DynamicTestimonialSection city={englishCity} />
+      
+    </main>
+    <Footer/>
+    </div>
+    
+  );
 };
 
 export default HeroContent;

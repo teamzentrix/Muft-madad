@@ -7,6 +7,10 @@ import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/context/languageContext';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import MuftMadadBlogs from '@/components/Blogs';
+import DynamicTestimonialSection from '@/components/dynamicTestimonials';
+
+const API = 'http://localhost:4000/api';
 
 export default function SpecialityPage({ params }) {
   const { id } = use(params);
@@ -14,294 +18,273 @@ export default function SpecialityPage({ params }) {
   const router = useRouter();
 
   const [activeTab, setActiveTab] = useState('treatments');
-  const [speciality, setSpeciality] = useState(null);
-  const [treatments, setTreatments] = useState([]);
-  const [hospitals, setHospitals] = useState([]);
-  const [doctors, setDoctors] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [speciality, setSpeciality]   = useState(null);
+  const [treatments, setTreatments]   = useState([]);
+  const [hospitals, setHospitals]     = useState([]);
+  const [doctors, setDoctors]         = useState([]);
+  const [loading, setLoading]         = useState(true);
+  const [error, setError]             = useState(null);
 
   useEffect(() => {
     if (!id) return;
-
     const fetchAll = async () => {
       try {
         setLoading(true);
-
-        // 1. Fetch speciality details first — we need name_en for filtering
-        const specRes = await axios.get(
-          `http://localhost:4000/api/specialities/${id}`,
-          { withCredentials: true }
-        );
+        const specRes = await axios.get(`${API}/specialities/${id}`, { withCredentials: true });
         const spec = specRes.data.data;
         setSpeciality(spec);
-
         const specialityNameEn = spec?.name_en || '';
 
-        // 2. Fetch all three in parallel now that we have the name
         const [treatRes, hospRes, docRes] = await Promise.allSettled([
-
-          // Treatments — filtered by specialty_id (integer FK)
-          axios.get(
-            `http://localhost:4000/api/admin/getBySpecialty/${id}`,
-            { withCredentials: true }
-          ),
-
-          // Hospitals — filtered by available_specialities text[] array
-          axios.get(
-            `http://localhost:4000/api/hospitals?specialty=${encodeURIComponent(specialityNameEn)}`,
-            { withCredentials: true }
-          ),
-
-          // Doctors — filtered by specialities text[] array
-          axios.get(
-            `http://localhost:4000/api/doctors?specialty=${encodeURIComponent(specialityNameEn)}`,
-            { withCredentials: true }
-          ),
+          axios.get(`${API}/admin/getBySpecialty/${id}`, { withCredentials: true }),
+          axios.get(`${API}/hospitals?specialty=${encodeURIComponent(specialityNameEn)}`, { withCredentials: true }),
+          axios.get(`${API}/doctors?specialty=${encodeURIComponent(specialityNameEn)}`, { withCredentials: true }),
         ]);
 
-        // Treatments
         if (treatRes.status === 'fulfilled') {
-  const d = treatRes.value.data;
-  setTreatments(Array.isArray(d) ? d : (d?.data || []));
-  console.log('treatments response:', d); // ✅ temporary — remove after confirming
-}
-
-        // Hospitals
+          const d = treatRes.value.data;
+          setTreatments(Array.isArray(d) ? d : (d?.data || []));
+        }
         if (hospRes.status === 'fulfilled') {
           const d = hospRes.value.data;
           setHospitals(Array.isArray(d) ? d : (d?.data || []));
         }
-
-        // Doctors
         if (docRes.status === 'fulfilled') {
           const d = docRes.value.data;
-          // doctors endpoint returns { data: [...], pagination: {} }
           setDoctors(Array.isArray(d) ? d : (d?.data || []));
         }
-
       } catch (err) {
         setError(err.response?.data?.message || 'Failed to load speciality');
       } finally {
         setLoading(false);
       }
     };
-
     fetchAll();
   }, [id]);
 
   const tabs = [
-    { id: 'treatments', label: lang === 'en' ? 'Treatments' : 'उपचार', count: treatments.length },
-    { id: 'hospitals', label: lang === 'en' ? 'Hospitals' : 'अस्पताल', count: hospitals.length },
-    { id: 'doctors', label: lang === 'en' ? 'Doctors' : 'डॉक्टर', count: doctors.length },
+    { id: 'treatments', label: lang === 'en' ? 'Treatments' : 'उपचार',  count: treatments.length },
+    { id: 'hospitals',  label: lang === 'en' ? 'Hospitals'  : 'अस्पताल', count: hospitals.length },
+    { id: 'doctors',    label: lang === 'en' ? 'Doctors'    : 'डॉक्टर',  count: doctors.length },
   ];
 
   if (loading) return (
-    <>
-      <style>{styles}</style>
-      <div className="loader-screen">
-        <div className="loader-dot" />
-        <p className="loader-text">Loading</p>
-      </div>
-    </>
+    <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center gap-4">
+      <div className="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
+      <p className="text-sm text-gray-400 tracking-widest uppercase">Loading</p>
+    </div>
   );
 
   if (error) return (
-    <>
-      <style>{styles}</style>
-      <div className="loader-screen">
-        <p className="error-text">{error}</p>
-        <button onClick={() => router.back()} className="back-btn">Go Back</button>
-      </div>
-    </>
+    <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center gap-4">
+      <p className="text-red-500 text-sm">{error}</p>
+      <button onClick={() => router.back()}
+        className="px-6 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-medium hover:bg-blue-700">
+        Go Back
+      </button>
+    </div>
   );
 
-  const specialityName = speciality ? (lang === 'en' ? speciality.name_en : speciality.name_hi) : '';
-  const specialityDesc = speciality ? (lang === 'en' ? speciality.description_en : speciality.description_hi) : '';
+  if (!speciality) return null;
+
+  const specialityName = lang === 'en' ? speciality.name_en : speciality.name_hi;
+  const specialityDesc = lang === 'en' ? speciality.description_en : speciality.description_hi;
 
   return (
-    <>
-      <style>{styles}</style>
-      <div className="page-root">
-        <Navbar />
+    <div className="min-h-screen bg-gray-50">
 
-        {/* ── Hero ── */}
-        <section className="hero">
-          <div className="hero-inner">
-            <div className="hero-left">
-              <span className="hero-badge">
-                {lang === 'en' ? 'Medical Specialty' : 'चिकित्सा विशेषता'}
-              </span>
-              <h1 className="hero-title">{specialityName}</h1>
-              <p className="hero-desc">{specialityDesc}</p>
+      {/* ✅ Navbar — no global CSS interference */}
+      <Navbar />
 
-              <div className="hero-stats">
-                <div className="stat-pill">
-                  <span className="stat-num">{treatments.length}</span>
-                  <span className="stat-label">{lang === 'en' ? 'Treatments' : 'उपचार'}</span>
-                </div>
-                <div className="stat-divider" />
-                <div className="stat-pill">
-                  <span className="stat-num">{hospitals.length}</span>
-                  <span className="stat-label">{lang === 'en' ? 'Hospitals' : 'अस्पताल'}</span>
-                </div>
-                <div className="stat-divider" />
-                <div className="stat-pill">
-                  <span className="stat-num">{doctors.length}</span>
-                  <span className="stat-label">{lang === 'en' ? 'Doctors' : 'डॉक्टर'}</span>
-                </div>
-              </div>
-            </div>
-            {speciality.image && (
-              <div className="hidden md:block">
-                <img
-                  src={speciality.image}
-                  alt={specialityName}
-                  className="rounded-2xl shadow-2xl w-full h-72 object-cover"
-                />
-              </div>
+      {/* ── Hero ── */}
+      <section className="bg-white border-b border-gray-100 pt-20">
+        <div className="max-w-6xl mx-auto px-6 sm:px-8 py-14 grid md:grid-cols-2 gap-16 items-center">
+          <div className="flex flex-col gap-5">
+            <span className="inline-block text-xs font-medium tracking-widest uppercase text-blue-600 bg-blue-50 px-3 py-1.5 rounded-full w-fit">
+              {lang === 'en' ? 'Medical Specialty' : 'चिकित्सा विशेषता'}
+            </span>
+            <h1 className="text-4xl sm:text-5xl font-light leading-tight tracking-tight text-gray-900 font-serif">
+              {specialityName}
+            </h1>
+            {specialityDesc && (
+              <p className="text-sm text-gray-500 leading-relaxed max-w-lg">{specialityDesc}</p>
             )}
-          </div>
-        </section>
 
-        {/* ── Tabs ── */}
-        <div className="tabs-bar">
-          <div className="tabs-inner">
-            {tabs.map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`tab-btn ${activeTab === tab.id ? 'tab-active' : ''}`}
-              >
-                {tab.label}
-                <span className={`tab-count ${activeTab === tab.id ? 'tab-count-active' : ''}`}>
-                  {tab.count}
-                </span>
-              </button>
-            ))}
+            {/* Stats strip */}
+            <div className="flex items-center w-fit bg-gray-50 border border-gray-200 rounded-xl overflow-hidden mt-2">
+              {[
+                { num: treatments.length, label: lang === 'en' ? 'Treatments' : 'उपचार' },
+                { num: hospitals.length,  label: lang === 'en' ? 'Hospitals'  : 'अस्पताल' },
+                { num: doctors.length,    label: lang === 'en' ? 'Doctors'    : 'डॉक्टर' },
+              ].map((s, i) => (
+                <React.Fragment key={i}>
+                  {i > 0 && <div className="w-px h-9 bg-gray-200 shrink-0" />}
+                  <div className="flex flex-col items-center px-7 py-3.5 gap-0.5">
+                    <span className="text-xl font-semibold text-gray-900 leading-none">{s.num}</span>
+                    <span className="text-[10px] text-gray-400 uppercase tracking-wider">{s.label}</span>
+                  </div>
+                </React.Fragment>
+              ))}
+            </div>
           </div>
+
+          {speciality.image && (
+            <div className="hidden md:block">
+              <img src={speciality.image} alt={specialityName}
+                className="w-full h-64 object-cover rounded-2xl shadow-lg" />
+            </div>
+          )}
         </div>
+      </section>
 
-        {/* ── Content ── */}
-        <main className="content">
+      {/* ── Tabs ── */}
+      <div className="sticky top-0 z-40 bg-white border-b border-gray-100 shadow-sm">
+        <div className="max-w-6xl mx-auto px-6 sm:px-8 flex overflow-x-auto scrollbar-hide">
+          {tabs.map(tab => (
+            <button key={tab.id} onClick={() => setActiveTab(tab.id)}
+              className={`relative flex items-center gap-2 px-6 py-4 text-sm font-medium whitespace-nowrap transition-colors shrink-0
+                ${activeTab === tab.id ? 'text-blue-600' : 'text-gray-400 hover:text-gray-700'}`}>
+              {tab.label}
+              <span className={`text-xs px-2 py-0.5 rounded-full font-semibold
+                ${activeTab === tab.id ? 'bg-blue-50 text-blue-600' : 'bg-gray-100 text-gray-400'}`}>
+                {tab.count}
+              </span>
+              {activeTab === tab.id && (
+                <span className="absolute bottom-0 left-6 right-6 h-0.5 bg-blue-600 rounded-t-full" />
+              )}
+            </button>
+          ))}
+        </div>
+      </div>
 
-          {/* Treatments */}
-          {activeTab === 'treatments' && (
-            <section>
-              <h2 className="section-title">
-                {lang === 'en' ? `Treatments` : `उपचार`}
-                <span className="section-count">{treatments.length}</span>
-              </h2>
-              {treatments.length === 0 ? (
-                <EmptyState icon="💊" message={lang === 'en' ? 'No treatments found for this specialty yet.' : 'अभी कोई उपचार नहीं मिला।'} />
-              ) : (
-                <div className="grid-3">
-                  {treatments.map((t) => (
-                    <div
-                      key={t.id || t.slug}
-                      className="card"
+      {/* ── Tab Content ── */}
+      <main className="max-w-6xl mx-auto px-6 sm:px-8 py-12 pb-20">
+
+        {/* Treatments */}
+        {activeTab === 'treatments' && (
+          <div>
+            <SectionTitle title={lang === 'en' ? 'Treatments' : 'उपचार'} count={treatments.length} />
+            {treatments.length === 0
+              ? <EmptyState icon="💊" message={lang === 'en' ? 'No treatments found for this specialty yet.' : 'अभी कोई उपचार नहीं मिला।'} />
+              : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                  {treatments.map(t => (
+                    <div key={t.id || t.slug}
                       onClick={() => router.push(`/treatment/${t.specialty_id}`)}
-                    >
+                      className="bg-white rounded-xl border border-gray-100 overflow-hidden cursor-pointer hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 group">
                       {t.treatment_image && (
-                        <div className="card-img-wrap">
-                          <img src={t.treatment_image} alt={t.name} className="card-img" />
+                        <div className="h-44 overflow-hidden">
+                          <img src={t.treatment_image} alt={t.name}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                         </div>
                       )}
-                      <div className="card-body">
-                        {t.comes_in && <span className="tag">{t.comes_in}</span>}
-                        <h3 className="card-title">{t.name}</h3>
-                        <p className="card-desc">{t.overview_description}</p>
-                        <div className="card-meta">
-                          {t.surgery_duration && <span className="meta-item">⏱ {t.surgery_duration}</span>}
-                          {t.success_rate && <span className="meta-item">✓ {t.success_rate}</span>}
-                          {t.recovery_time && <span className="meta-item">📅 {t.recovery_time}</span>}
-                          {t.ayushman_covered && <span className="meta-item meta-green">🏛 Ayushman</span>}
+                      <div className="p-5 flex flex-col gap-2.5">
+                        {t.comes_in && (
+                          <span className="text-[10px] font-semibold tracking-widest uppercase text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full w-fit">
+                            {t.comes_in}
+                          </span>
+                        )}
+                        <h3 className="text-sm font-semibold text-gray-900 leading-snug">{t.name}</h3>
+                        <p className="text-xs text-gray-500 leading-relaxed line-clamp-2">{t.overview_description}</p>
+                        <div className="flex flex-wrap gap-1.5">
+                          {t.surgery_duration && <Chip>⏱ {t.surgery_duration}</Chip>}
+                          {t.success_rate    && <Chip>✓ {t.success_rate}</Chip>}
+                          {t.recovery_time   && <Chip>📅 {t.recovery_time}</Chip>}
+                          {t.ayushman_covered && <Chip green>🏛 Ayushman</Chip>}
                         </div>
-                        <button className="card-btn">
-                          {lang === 'en' ? 'View Details' : 'विवरण देखें'} →
+                        <button className="mt-1 text-xs font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg py-2 transition-colors">
+                          {lang === 'en' ? 'View Details →' : 'विवरण देखें →'}
                         </button>
                       </div>
                     </div>
                   ))}
                 </div>
               )}
-            </section>
-          )}
+          </div>
+        )}
 
-          {/* Hospitals */}
-          {activeTab === 'hospitals' && (
-            <section>
-              <h2 className="section-title">
-                {lang === 'en' ? 'Hospitals' : 'अस्पताल'}
-                <span className="section-count">{hospitals.length}</span>
-              </h2>
-              {hospitals.length === 0 ? (
-                <EmptyState icon="🏥" message={lang === 'en' ? 'No hospitals found for this specialty yet.' : 'अभी कोई अस्पताल नहीं मिला।'} />
-              ) : (
-                <div className="grid-3">
-                  {hospitals.map((h) => (
-                    <div key={h.id || h.uuid} className="card">
-                      {h.image && (
-                        <div className="card-img-wrap">
-                          <img src={h.image} alt={h.name} className="card-img" />
+        {/* Hospitals */}
+        {activeTab === 'hospitals' && (
+          <div>
+            <SectionTitle title={lang === 'en' ? 'Hospitals' : 'अस्पताल'} count={hospitals.length} />
+            {hospitals.length === 0
+              ? <EmptyState icon="🏥" message={lang === 'en' ? 'No hospitals found for this specialty yet.' : 'अभी कोई अस्पताल नहीं मिला।'} />
+              : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                  {hospitals.map(h => (
+                    <div key={h.id || h.uuid}
+                      onClick={() => router.push(`/allHospitals/${h.id}`)}
+                      className="bg-white rounded-xl border border-gray-100 overflow-hidden cursor-pointer hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 group">
+                      {h.photo ? (
+                        <div className="h-40 overflow-hidden">
+                          <img src={h.photo} alt={h.name}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                         </div>
+                      ) : (
+                        <div className="h-40 bg-gradient-to-br from-blue-50 to-indigo-50 flex items-center justify-center text-4xl">🏥</div>
                       )}
-                      <div className="card-body">
-                        <h3 className="card-title">{h.name}</h3>
-                        {h.city && (
-                          <p className="card-location">📍 {h.city}{h.state ? `, ${h.state}` : ''}</p>
-                        )}
-                        {h.average_rating > 0 && (
-                          <div className="rating-row">
-                            <span className="rating-stars">{'★'.repeat(Math.round(h.average_rating))}{'☆'.repeat(5 - Math.round(h.average_rating))}</span>
-                            <span className="rating-val">{h.average_rating}/5</span>
+                      <div className="p-5 flex flex-col gap-2">
+                        <div className="flex items-start justify-between gap-2">
+                          <h3 className="text-sm font-semibold text-gray-900">{h.name}</h3>
+                          {h.is_verified && (
+                            <span className="shrink-0 text-[10px] font-semibold text-green-700 bg-green-50 px-2 py-0.5 rounded-full">✓ Verified</span>
+                          )}
+                        </div>
+                        {h.city && <p className="text-xs text-gray-400">📍 {h.city}{h.state ? `, ${h.state}` : ''}</p>}
+                        {h.phone && <p className="text-xs text-gray-400">📞 {h.phone}</p>}
+                        {h.rating > 0 && (
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-yellow-400 text-xs">{'★'.repeat(Math.round(h.rating))}</span>
+                            <span className="text-xs text-gray-400">{h.rating}/5</span>
                           </div>
                         )}
+                        {h.timing_display && <p className="text-xs text-gray-400">🕐 {h.timing_display}</p>}
                       </div>
                     </div>
                   ))}
                 </div>
               )}
-            </section>
-          )}
+          </div>
+        )}
 
-          {/* Doctors */}
-          {activeTab === 'doctors' && (
-            <section>
-              <h2 className="section-title">
-                {lang === 'en' ? 'Doctors' : 'डॉक्टर'}
-                <span className="section-count">{doctors.length}</span>
-              </h2>
-              {doctors.length === 0 ? (
-                <EmptyState icon="👨‍⚕️" message={lang === 'en' ? 'No doctors found for this specialty yet.' : 'अभी कोई डॉक्टर नहीं मिला।'} />
-              ) : (
-                <div className="grid-3">
-                  {doctors.map((d) => (
-                    <div key={d.uuid || d.id} className="card doctor-card">
-                      <div className="doctor-inner">
+        {/* Doctors */}
+        {activeTab === 'doctors' && (
+          <div>
+            <SectionTitle title={lang === 'en' ? 'Doctors' : 'डॉक्टर'} count={doctors.length} />
+            {doctors.length === 0
+              ? <EmptyState icon="👨‍⚕️" message={lang === 'en' ? 'No doctors found for this specialty yet.' : 'अभी कोई डॉक्टर नहीं मिला।'} />
+              : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                  {doctors.map(d => (
+                    <div key={d.uuid || d.id}
+                      className="bg-white rounded-xl border border-gray-100 p-5 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200">
+                      <div className="flex gap-4 items-start">
                         {d.photo ? (
-                          <img src={d.photo} alt={d.name} className="doctor-avatar" />
+                          <img src={d.photo} alt={d.name}
+                            className="w-14 h-14 rounded-full object-cover border-2 border-gray-100 shrink-0" />
                         ) : (
-                          <div className="doctor-avatar-placeholder">
-                            <span>👨‍⚕️</span>
-                          </div>
+                          <div className="w-14 h-14 rounded-full bg-blue-50 border-2 border-gray-100 flex items-center justify-center text-2xl shrink-0">👨‍⚕️</div>
                         )}
-                        <div className="doctor-info">
-                          <h3 className="card-title">{d.name}</h3>
-                          {d.degrees?.length > 0 && (
-                            <p className="doctor-degrees">{d.degrees.join(', ')}</p>
-                          )}
-                          <div className="doctor-meta">
-                            {d.experience_in_years && <span className="meta-item">🩺 {d.experience_in_years} yrs</span>}
-                            {d.city && <span className="meta-item">📍 {d.city}</span>}
+                        <div className="flex-1 min-w-0 flex flex-col gap-1.5">
+                          <div className="flex items-center gap-1.5">
+                            <h3 className="text-sm font-semibold text-gray-900 truncate">{d.name}</h3>
+                            {d.is_verified && <span className="text-green-500 text-xs shrink-0">✓</span>}
+                          </div>
+                          {d.degrees?.length > 0 && <p className="text-xs text-blue-600 truncate">{d.degrees.join(', ')}</p>}
+                          {d.specialities?.length > 0 && <p className="text-xs text-purple-600 truncate">{d.specialities.join(', ')}</p>}
+                          <div className="flex flex-wrap gap-1.5">
+                            {d.experience_in_years && <Chip>🩺 {d.experience_in_years} yrs</Chip>}
+                            {d.city && <Chip>📍 {d.city}</Chip>}
                           </div>
                           {d.consultation_fee && (
-                            <p className="doctor-fee">₹{d.consultation_fee} <span>consultation</span></p>
+                            <p className="text-xs font-semibold text-green-600">
+                              ₹{d.consultation_fee} <span className="font-normal text-gray-400">consultation</span>
+                            </p>
                           )}
                           {d.average_rating > 0 && (
-                            <div className="rating-row">
-                              <span className="rating-stars small">{'★'.repeat(Math.round(d.average_rating))}</span>
-                              <span className="rating-val">{d.average_rating}/5</span>
+                            <div className="flex items-center gap-1">
+                              <span className="text-yellow-400 text-xs">{'★'.repeat(Math.round(d.average_rating))}</span>
+                              <span className="text-xs text-gray-400">{d.average_rating}/5</span>
                             </div>
                           )}
                         </div>
@@ -310,259 +293,52 @@ export default function SpecialityPage({ params }) {
                   ))}
                 </div>
               )}
-            </section>
-          )}
-        </main>
+          </div>
+        )}
+      </main>
 
-        <Footer />
-      </div>
-    </>
+      {/* ✅ Blogs Section */}
+      <MuftMadadBlogs />
+
+      {/* ✅ Testimonials Section */}
+      <DynamicTestimonialSection />
+
+      {/* ✅ Footer — no global CSS interference */}
+      <Footer />
+    </div>
+  );
+}
+
+/* ── Reusable sub-components ─────────────────────────────────────────────── */
+
+function SectionTitle({ title, count }) {
+  return (
+    <h2 className="flex items-center gap-3 mb-7 text-2xl font-serif font-light text-gray-900">
+      {title}
+      <span className="font-sans text-xs font-medium text-gray-400 bg-gray-100 px-2.5 py-1 rounded-full">
+        {count}
+      </span>
+    </h2>
+  );
+}
+
+function Chip({ children, green = false }) {
+  return (
+    <span className={`text-[10px] px-2 py-0.5 rounded-full border
+      ${green
+        ? 'text-green-700 bg-green-50 border-green-100'
+        : 'text-gray-400 bg-gray-50 border-gray-100'
+      }`}>
+      {children}
+    </span>
   );
 }
 
 function EmptyState({ icon, message }) {
   return (
-    <div className="empty-state">
-      <span className="empty-icon">{icon}</span>
-      <p className="empty-msg">{message}</p>
+    <div className="bg-white border border-gray-100 rounded-xl py-16 flex flex-col items-center gap-3 text-center">
+      <span className="text-4xl opacity-30">{icon}</span>
+      <p className="text-sm text-gray-400">{message}</p>
     </div>
   );
 }
-
-
-const styles = `
-  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display&display=swap');
-
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  :root {
-    --bg: #f7f7f5;
-    --white: #ffffff;
-    --text: #111111;
-    --text-secondary: #666666;
-    --text-muted: #999999;
-    --accent: #1a56db;
-    --accent-light: #eff4ff;
-    --border: #e8e8e5;
-    --green: #15803d;
-    --radius: 12px;
-    --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04);
-    --shadow-hover: 0 2px 8px rgba(0,0,0,0.08), 0 8px 24px rgba(0,0,0,0.08);
-    font-family: 'DM Sans', sans-serif;
-  }
-
-  .page-root { background: var(--bg); min-height: 100vh; color: var(--text); }
-
-  /* Loader */
-  .loader-screen {
-    min-height: 100vh; display: flex; flex-direction: column;
-    align-items: center; justify-content: center; gap: 16px; background: var(--bg);
-  }
-  .loader-dot {
-    width: 10px; height: 10px; border-radius: 50%; background: var(--accent);
-    animation: pulse 1.2s ease-in-out infinite;
-  }
-  @keyframes pulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.6);opacity:0.4} }
-  .loader-text { font-size: 14px; color: var(--text-muted); letter-spacing: 0.05em; }
-  .error-text { color: #dc2626; font-size: 15px; }
-  .back-btn {
-    margin-top: 8px; padding: 10px 24px; background: var(--accent); color: #fff;
-    border: none; border-radius: var(--radius); font-size: 14px; cursor: pointer;
-    font-family: inherit;
-  }
-
-  /* Hero */
-  .hero {
-    background: var(--white);
-    border-bottom: 1px solid var(--border);
-    padding-top: 80px;
-  }
-  .hero-inner {
-    max-width: 1200px; margin: 0 auto;
-    padding: 56px 32px;
-    display: grid; grid-template-columns: 1fr auto; gap: 64px; align-items: center;
-  }
-  .hero-left { display: flex; flex-direction: column; gap: 20px; }
-  .hero-badge {
-    display: inline-block;
-    font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase;
-    color: var(--accent); background: var(--accent-light);
-    padding: 5px 12px; border-radius: 99px; width: fit-content;
-  }
-  .hero-title {
-    font-family: 'DM Serif Display', serif;
-    font-size: clamp(2rem, 4vw, 3.25rem);
-    font-weight: 400; line-height: 1.1;
-    letter-spacing: -0.02em; color: var(--text);
-  }
-  .hero-desc {
-    font-size: 15px; line-height: 1.7; color: var(--text-secondary);
-    max-width: 520px;
-  }
-  .hero-stats {
-    display: flex; align-items: center; gap: 0;
-    background: var(--bg); border: 1px solid var(--border);
-    border-radius: var(--radius); overflow: hidden;
-    width: fit-content; margin-top: 8px;
-  }
-  .stat-pill {
-    display: flex; flex-direction: column; align-items: center;
-    padding: 14px 28px; gap: 2px;
-  }
-  .stat-num { font-size: 22px; font-weight: 600; color: var(--text); line-height: 1; }
-  .stat-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; }
-  .stat-divider { width: 1px; height: 36px; background: var(--border); }
-
-  .hero-img-wrap {
-    width: 340px; height: 260px;
-    border-radius: var(--radius); overflow: hidden;
-    flex-shrink: 0;
-    box-shadow: var(--shadow);
-  }
-  .hero-img { width: 100%; height: 100%; object-fit: cover; }
-
-  /* Tabs */
-  .tabs-bar {
-    position: sticky; top: 0; z-index: 40;
-    background: var(--white); border-bottom: 1px solid var(--border);
-  }
-  .tabs-inner {
-    max-width: 1200px; margin: 0 auto;
-    padding: 0 32px;
-    display: flex; gap: 0;
-  }
-  .tab-btn {
-    display: flex; align-items: center; gap: 8px;
-    padding: 16px 24px;
-    font-family: inherit; font-size: 14px; font-weight: 500;
-    color: var(--text-secondary); background: none; border: none;
-    border-bottom: 2px solid transparent; cursor: pointer;
-    transition: color 0.15s, border-color 0.15s;
-    white-space: nowrap;
-  }
-  .tab-btn:hover { color: var(--text); }
-  .tab-active { color: var(--accent) !important; border-bottom-color: var(--accent) !important; }
-  .tab-count {
-    font-size: 11px; font-weight: 600; padding: 2px 7px; border-radius: 99px;
-    background: var(--bg); color: var(--text-muted);
-    transition: background 0.15s, color 0.15s;
-  }
-  .tab-count-active { background: var(--accent-light); color: var(--accent); }
-
-  /* Content */
-  .content { max-width: 1200px; margin: 0 auto; padding: 48px 32px 80px; }
-
-  .section-title {
-    font-family: 'DM Serif Display', serif;
-    font-size: 1.5rem; font-weight: 400;
-    color: var(--text); margin-bottom: 28px;
-    display: flex; align-items: center; gap: 12px;
-  }
-  .section-count {
-    font-family: 'DM Sans', sans-serif;
-    font-size: 13px; font-weight: 500;
-    color: var(--text-muted); background: var(--border);
-    padding: 2px 10px; border-radius: 99px;
-  }
-
-  /* Grid */
-  .grid-3 {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
-  }
-  @media (max-width: 900px) { .grid-3 { grid-template-columns: repeat(2, 1fr); } }
-  @media (max-width: 600px) { .grid-3 { grid-template-columns: 1fr; } }
-
-  /* Card */
-  .card {
-    background: var(--white); border-radius: var(--radius);
-    border: 1px solid var(--border);
-    overflow: hidden; cursor: pointer;
-    transition: box-shadow 0.2s, transform 0.2s, border-color 0.2s;
-    box-shadow: var(--shadow);
-  }
-  .card:hover {
-    box-shadow: var(--shadow-hover); transform: translateY(-2px);
-    border-color: #d0d0cc;
-  }
-  .card-img-wrap { height: 180px; overflow: hidden; }
-  .card-img {
-    width: 100%; height: 100%; object-fit: cover;
-    transition: transform 0.4s ease;
-  }
-  .card:hover .card-img { transform: scale(1.04); }
-  .card-body { padding: 20px; display: flex; flex-direction: column; gap: 10px; }
-
-  .tag {
-    display: inline-block; font-size: 10px; font-weight: 600; letter-spacing: 0.08em;
-    text-transform: uppercase; color: var(--accent); background: var(--accent-light);
-    padding: 3px 10px; border-radius: 99px; width: fit-content;
-  }
-  .card-title {
-    font-size: 15px; font-weight: 600; color: var(--text); line-height: 1.35;
-  }
-  .card-desc {
-    font-size: 13px; color: var(--text-secondary); line-height: 1.6;
-    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
-  }
-  .card-location { font-size: 13px; color: var(--text-secondary); }
-  .card-meta { display: flex; flex-wrap: wrap; gap: 8px; }
-  .meta-item {
-    font-size: 11px; color: var(--text-muted);
-    background: var(--bg); border: 1px solid var(--border);
-    padding: 3px 9px; border-radius: 99px;
-  }
-  .meta-green { color: var(--green); }
-  .card-btn {
-    margin-top: 4px; font-family: inherit; font-size: 13px; font-weight: 500;
-    color: var(--accent); background: var(--accent-light);
-    border: none; border-radius: 8px; padding: 9px 16px;
-    cursor: pointer; text-align: center;
-    transition: background 0.15s;
-  }
-  .card-btn:hover { background: #dbeafe; }
-
-  /* Rating */
-  .rating-row { display: flex; align-items: center; gap: 6px; }
-  .rating-stars { font-size: 13px; color: #f59e0b; letter-spacing: -1px; }
-  .rating-stars.small { font-size: 11px; }
-  .rating-val { font-size: 12px; color: var(--text-muted); }
-
-  /* Doctor */
-  .doctor-card { cursor: default; }
-  .doctor-inner { padding: 20px; display: flex; gap: 16px; align-items: flex-start; }
-  .doctor-avatar {
-    width: 56px; height: 56px; border-radius: 50%; object-fit: cover;
-    border: 2px solid var(--border); flex-shrink: 0;
-  }
-  .doctor-avatar-placeholder {
-    width: 56px; height: 56px; border-radius: 50%;
-    background: var(--accent-light); display: flex; align-items: center; justify-content: center;
-    font-size: 22px; flex-shrink: 0; border: 2px solid var(--border);
-  }
-  .doctor-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
-  .doctor-degrees { font-size: 12px; color: var(--accent); font-weight: 500; }
-  .doctor-meta { display: flex; gap: 8px; flex-wrap: wrap; }
-  .doctor-fee { font-size: 13px; font-weight: 600; color: var(--green); }
-  .doctor-fee span { font-weight: 400; color: var(--text-muted); font-size: 11px; }
-
-  /* Empty */
-  .empty-state {
-    background: var(--white); border: 1px solid var(--border); border-radius: var(--radius);
-    padding: 64px 32px; text-align: center;
-    display: flex; flex-direction: column; align-items: center; gap: 12px;
-  }
-  .empty-icon { font-size: 36px; opacity: 0.4; }
-  .empty-msg { font-size: 14px; color: var(--text-muted); }
-
-  /* Responsive hero */
-  @media (max-width: 768px) {
-    .hero-inner { grid-template-columns: 1fr; padding: 40px 20px; gap: 32px; }
-    .hero-img-wrap { display: none; }
-    .hero-stats { width: 100%; }
-    .stat-pill { flex: 1; }
-    .tabs-inner { padding: 0 16px; }
-    .content { padding: 32px 16px 60px; }
-  }
-`;

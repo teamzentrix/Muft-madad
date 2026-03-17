@@ -1,190 +1,168 @@
-import React from 'react';
-import { Star, MapPin, Calendar, ChevronLeft, ChevronRight } from 'lucide-react';
+'use client';
+import React, { useState, useEffect } from 'react';
+import { Star, MapPin, Calendar, ChevronLeft, ChevronRight, User } from 'lucide-react';
+import axios from 'axios';
 
-const TestimonialCard = ({ testimonial }) => {
+const API = 'http://localhost:4000/api';
+
+const SkeletonCard = () => (
+  <div className="bg-white rounded-xl border border-gray-200 p-5 animate-pulse">
+    <div className="flex items-start justify-between mb-4">
+      <div className="space-y-2 flex-1">
+        <div className="h-4 bg-gray-200 rounded w-1/2" />
+        <div className="h-3 bg-gray-100 rounded w-1/3" />
+      </div>
+    </div>
+    <div className="flex gap-1 mb-4">{[...Array(5)].map((_, i) => <div key={i} className="w-4 h-4 bg-gray-200 rounded-full" />)}</div>
+    <div className="space-y-2 mb-4">
+      <div className="h-3 bg-gray-100 rounded w-full" />
+      <div className="h-3 bg-gray-100 rounded w-5/6" />
+      <div className="h-3 bg-gray-100 rounded w-4/6" />
+    </div>
+    <div className="flex justify-between pt-3 border-t border-gray-100">
+      <div className="h-3 bg-gray-100 rounded w-1/3" />
+      <div className="h-3 bg-gray-100 rounded w-1/4" />
+    </div>
+  </div>
+);
+
+const TestimonialCard = ({ review }) => {
+  const displayDate = review.date
+    ? new Date(review.date).toLocaleDateString('en-IN', { day: '2-digit', month: '2-digit', year: 'numeric' })
+    : '';
+
   return (
     <div className="bg-white rounded-xl border border-gray-200 p-5 hover:shadow-lg transition-all duration-300 flex flex-col h-full">
-      {/* Header */}
-      <div className="flex items-start justify-between mb-4">
-        <div className="flex-1">
-          <h3 className="text-base font-bold text-gray-900 mb-1">
-            {testimonial.name}
-          </h3>
-          <p className="text-xs text-gray-500">
-            Treatments: {testimonial.treatment}
-          </p>
+      <div className="flex items-start justify-between mb-3">
+        <div className="flex items-center gap-2 flex-1">
+          <div className="w-9 h-9 bg-gradient-to-br from-emerald-500 to-blue-500 rounded-full flex items-center justify-center shrink-0">
+            <User className="w-4 h-4 text-white" />
+          </div>
+          <div>
+            <h3 className="text-sm font-bold text-gray-900">{review.name}</h3>
+            {review.treatment && (
+              <p className="text-xs text-emerald-600 font-medium">Treatment: {review.treatment}</p>
+            )}
+          </div>
         </div>
       </div>
 
-      {/* Star Rating */}
-      <div className="flex gap-1 mb-4">
-        {[...Array(5)].map((_, index) => (
-          <Star
-            key={index}
-            className={`w-4 h-4 ${
-              index < testimonial.rating
-                ? 'fill-yellow-400 text-yellow-400'
-                : 'fill-gray-200 text-gray-200'
-            }`}
-          />
+      <div className="flex gap-1 mb-3">
+        {[...Array(5)].map((_, i) => (
+          <Star key={i} className={`w-3.5 h-3.5 ${i < (review.rating || 5) ? 'fill-yellow-400 text-yellow-400' : 'fill-gray-200 text-gray-200'}`} />
         ))}
       </div>
 
-      {/* Testimonial Text */}
       <div className="flex-1 mb-4">
-        <p className="text-sm text-gray-700 leading-relaxed">
-          "{testimonial.text}"
+        <p className="text-sm text-gray-700 leading-relaxed line-clamp-4">
+          "{review.description}"
         </p>
       </div>
 
-      {/* Footer */}
-      <div className="flex items-center justify-between text-xs text-gray-600 pt-3 border-t border-gray-100">
-        <div className="flex items-center gap-1">
-          <MapPin className="w-3.5 h-3.5" />
-          <span>Cities: {testimonial.city}</span>
-        </div>
-        <div className="flex items-center gap-1">
-          <Calendar className="w-3.5 h-3.5" />
-          <span>{testimonial.date}</span>
-        </div>
+      <div className="flex items-center justify-between text-xs text-gray-500 pt-3 border-t border-gray-100">
+        {review.city && (
+          <div className="flex items-center gap-1">
+            <MapPin className="w-3.5 h-3.5" />{review.city}
+          </div>
+        )}
+        {displayDate && (
+          <div className="flex items-center gap-1">
+            <Calendar className="w-3.5 h-3.5" />{displayDate}
+          </div>
+        )}
       </div>
     </div>
   );
 };
 
-export default function DynamicTestimonialSection() {
-  const testimonials = [
-    {
-      id: 1,
-      name: "Papu",
-      treatment: "Kidney Stones",
-      rating: 5,
-      text: "Mere pet me ashniya dard hota tha fir maine gaw ke doctor ko dikhaya phir mujhe ptaa chala ki mera gurud mae problem hai. Gaw ke doctor ne mujhe mepho kaa help line number diya. Medpho ki team ne mujhe hospital ki list diya aur maine ek hospital select karke mepho ki madad se ilaj karaya aur mae aaj bilkul sawsth hu.",
-      city: "Moradabad",
-      date: "23/09/2024"
-    },
-    {
-      id: 2,
-      name: "Abdul",
-      treatment: "Kidney Stones",
-      rating: 5,
-      text: "Mere papa ka ilaaz ayushman se bilkul muft me ho gaya, ek rupay bhi nhi lage. Iske alawa hum inki sevaon se bht kuch hai, asha krte hai medpho ese hi nek kaam krta rahe.",
-      city: "Moradabad",
-      date: "14/04/2023"
-    },
-    {
-      id: 3,
-      name: "Nafeez Ahmad",
-      treatment: "Cataract",
-      rating: 5,
-      text: "Mae Medpho ki sahayata se gya tha ayushman card se ilaj karane. Bahut badhiya ilaj hua mera ek number kaa koi dikkat koi presani nhi aur ek bhu rupya nhi lgaa mera ilaj karane mae, sirf aane jane mae kiraya lga mera.",
-      city: "Moradabad",
-      date: "23/09/2024"
-    },
-    {
-      id: 4,
-      name: "Bintee jehraaa",
-      treatment: "Cataract",
-      rating: 4,
-      text: "Mere abbu ki ankhon mein diikat thi unhe dekhne mae kathinyai hoti thi, Mere Pass mepho ka number tha koi dikkat thi maine call kiya aur mepho sathi ki madad ke wajh se mere aboo kaa safal motiybind ka operation hua aur ilaj mae koi dikkat prasani nhi hua.",
-      city: "Moradabad",
-      date: "23/09/2024"
-    },
-    {
-      id: 5,
-      name: "Rajesh Kumar",
-      treatment: "Heart Surgery",
-      rating: 5,
-      text: "The treatment I received was exceptional. The doctors were very caring and professional. Medpho helped me throughout the entire process from booking to post-surgery care. I am grateful for their support.",
-      city: "Delhi",
-      date: "15/10/2024"
-    },
-    {
-      id: 6,
-      name: "Priya Sharma",
-      treatment: "Diabetes Management",
-      rating: 5,
-      text: "Medpho made it so easy to find the right specialist for my diabetes. The entire process was smooth and the staff was very helpful. Highly recommended!",
-      city: "Mumbai",
-      date: "05/11/2024"
-    }
-  ];
+const CARDS_PER_PAGE = 4;
 
-  const [currentPage, setCurrentPage] = React.useState(0);
-  const cardsPerPage = 4;
-  const totalPages = Math.ceil(testimonials.length / cardsPerPage);
+// ✅ Accepts optional `city` prop — filters reviews by city if provided
+export default function DynamicTestimonialSection({ city = '' }) {
+  const [reviews, setReviews] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(0);
 
-  const displayedTestimonials = testimonials.slice(
-    currentPage * cardsPerPage,
-    (currentPage + 1) * cardsPerPage
-  );
+  useEffect(() => {
+    const fetchReviews = async () => {
+      setLoading(true);
+      try {
+        // Use city filter endpoint if city provided, else fetch all
+        const url = city
+          ? `${API}/users/reviews/${encodeURIComponent(city)}`
+          : `${API}/users/reviews`;
+        const res = await axios.get(url, { withCredentials: true });
+        const data = res.data?.data || res.data || [];
+        setReviews(Array.isArray(data) ? data : []);
+        setCurrentPage(0); // reset page when city changes
+      } catch {
+        setReviews([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchReviews();
+  }, [city]);
 
-  const nextPage = () => {
-    setCurrentPage((prev) => (prev + 1) % totalPages);
-  };
-
-  const prevPage = () => {
-    setCurrentPage((prev) => (prev - 1 + totalPages) % totalPages);
-  };
+  const totalPages = Math.ceil(reviews.length / CARDS_PER_PAGE);
+  const displayed = reviews.slice(currentPage * CARDS_PER_PAGE, (currentPage + 1) * CARDS_PER_PAGE);
 
   return (
-    <section className="py-12 px-4 bg-linear-to-b from-white to-gray-50">
+    <section className="py-12 px-4 bg-gradient-to-b from-white to-gray-50">
       <div className="max-w-7xl mx-auto">
-        {/* Section Header */}
         <div className="mb-10 text-center">
           <h2 className="text-3xl font-bold text-gray-900 mb-2">
-            What Our Patients Say
+            {city ? `What Patients in ${city} Say` : 'What Our Patients Say'}
           </h2>
-          <p className="text-gray-600">
-            Real experiences from real people
-          </p>
+          <p className="text-gray-600">Real experiences from real people</p>
           <div className="h-1 w-20 bg-blue-600 rounded-full mx-auto mt-4"></div>
         </div>
 
-        {/* Testimonials Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
-          {displayedTestimonials.map((testimonial) => (
-            <TestimonialCard key={testimonial.id} testimonial={testimonial} />
-          ))}
-        </div>
-
-        {/* Navigation */}
-        {totalPages > 1 && (
-          <div className="flex items-center justify-center gap-4">
-            <button
-              onClick={prevPage}
-              className="p-2 rounded-full bg-white border border-gray-200 hover:bg-gray-50 transition-colors duration-200 disabled:opacity-50"
-              disabled={currentPage === 0}
-            >
-              <ChevronLeft className="w-5 h-5 text-gray-600" />
-            </button>
-
-            {/* Page Indicators */}
-            <div className="flex gap-2">
-              {[...Array(totalPages)].map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => setCurrentPage(index)}
-                  className={`w-2 h-2 rounded-full transition-all duration-200 ${
-                    index === currentPage
-                      ? 'bg-blue-600 w-8'
-                      : 'bg-gray-300 hover:bg-gray-400'
-                  }`}
-                />
-              ))}
-            </div>
-
-            <button
-              onClick={nextPage}
-              className="p-2 rounded-full bg-white border border-gray-200 hover:bg-gray-50 transition-colors duration-200 disabled:opacity-50"
-              disabled={currentPage === totalPages - 1}
-            >
-              <ChevronRight className="w-5 h-5 text-gray-600" />
-            </button>
+        {/* Loading */}
+        {loading && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+            {[...Array(CARDS_PER_PAGE)].map((_, i) => <SkeletonCard key={i} />)}
           </div>
         )}
 
-        {/* Stats Section */}
+        {/* Empty */}
+        {!loading && reviews.length === 0 && (
+          <div className="text-center py-16 text-gray-400 text-sm">
+            No reviews found{city ? ` for ${city}` : ''} yet.
+          </div>
+        )}
+
+        {/* Reviews Grid */}
+        {!loading && reviews.length > 0 && (
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+              {displayed.map((review, i) => (
+                <TestimonialCard key={review.id || review.uuid || i} review={review} />
+              ))}
+            </div>
+
+            {totalPages > 1 && (
+              <div className="flex items-center justify-center gap-4">
+                <button onClick={() => setCurrentPage(p => p - 1)} disabled={currentPage === 0}
+                  className="p-2 rounded-full bg-white border border-gray-200 hover:bg-gray-50 transition-colors disabled:opacity-50">
+                  <ChevronLeft className="w-5 h-5 text-gray-600" />
+                </button>
+                <div className="flex gap-2">
+                  {[...Array(totalPages)].map((_, i) => (
+                    <button key={i} onClick={() => setCurrentPage(i)}
+                      className={`h-2 rounded-full transition-all duration-200 ${i === currentPage ? 'bg-blue-600 w-8' : 'w-2 bg-gray-300 hover:bg-gray-400'}`} />
+                  ))}
+                </div>
+                <button onClick={() => setCurrentPage(p => p + 1)} disabled={currentPage === totalPages - 1}
+                  className="p-2 rounded-full bg-white border border-gray-200 hover:bg-gray-50 transition-colors disabled:opacity-50">
+                  <ChevronRight className="w-5 h-5 text-gray-600" />
+                </button>
+              </div>
+            )}
+          </>
+        )}
+
+        {/* Stats */}
         <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="text-center p-6 bg-white rounded-xl border border-gray-200">
             <p className="text-4xl font-bold text-blue-600 mb-2">5000+</p>
