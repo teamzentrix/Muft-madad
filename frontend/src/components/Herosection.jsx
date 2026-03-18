@@ -34,35 +34,35 @@ const HeroContent = () => {
   const content = HeroData[lang];
 
   return (
-    <main className="max-w-7xl mx-auto px-4 sm:px-6 pt-8 mt-20 lg:mt-26">
-      <div className="grid lg:grid-cols-2 gap-8 sm:gap-10 md:gap-12 items-center">
+    <main className="max-w-7xl mx-auto px-4 sm:px-6 pt-4 sm:pt-6 mt-16 sm:mt-20">
+      <div className="grid lg:grid-cols-2 gap-6 sm:gap-8 items-center">
         {/* Left Content */}
-        <div className="space-y-6 sm:space-y-8">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif font-medium uppercase text-gray-900 leading-tight tracking-widest">
+        <div className="space-y-4 sm:space-y-5">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-serif font-medium uppercase text-gray-900 leading-tight tracking-widest">
             {content.title}
             <br />
             {content.subtitle}
           </h1>
 
-          <ul className="space-y-3 sm:space-y-4">
+          <ul className="space-y-2 sm:space-y-3">
             {content.points.map((point, index) => (
-              <li key={index} className="flex items-start gap-2 sm:gap-3">
-                <span className="text-xl sm:text-2xl mt-1">▸</span>
-                <span className="text-base sm:text-lg md:text-xl text-gray-700">{point}</span>
+              <li key={index} className="flex items-start gap-2">
+                <span className="text-lg sm:text-xl mt-0.5 shrink-0">▸</span>
+                <span className="text-sm sm:text-base md:text-lg text-gray-700">{point}</span>
               </li>
             ))}
           </ul>
 
-          <a href="tel:+917088440387" className="w-full sm:w-auto">
-            <button className="flex cursor-pointer items-center gap-2 bg-green-700 hover:bg-green-600 text-white font-semibold px-6 sm:px-8 py-3 sm:py-4 rounded-md transition shadow-md text-base sm:text-lg w-full sm:w-auto justify-center">
-              <Phone className="w-4 h-4 sm:w-5 sm:h-5" />
+          <a href="tel:+917088440387" className="block w-full sm:w-auto sm:inline-block">
+            <button className="flex cursor-pointer items-center gap-2 bg-green-700 hover:bg-green-600 text-white font-semibold px-5 sm:px-7 py-2.5 sm:py-3 rounded-md transition shadow-md text-sm sm:text-base w-full sm:w-auto justify-center">
+              <Phone className="w-4 h-4 shrink-0" />
               <span>{content.button}</span>
             </button>
           </a>
         </div>
 
         {/* Right Image */}
-        <div className="relative mt-8 lg:mt-0">
+        <div className="mt-4 lg:mt-0">
           <img
             src="/HeroImage.png"
             alt="Happy family"
