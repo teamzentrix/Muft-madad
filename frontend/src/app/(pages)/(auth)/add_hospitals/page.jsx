@@ -547,6 +547,7 @@ const AdminHospitalForm = () => {
             location: null, about: '', timing_display: '',
             certifications: [], available_specialities: [],
             available_services: [], gallery_images: [],
+            available_treatments: [],
             total_doctors: 0, total_specialities: 0,
             is_verified: false, is_active: true,
             meta_title: '', meta_description: '',
@@ -554,7 +555,7 @@ const AdminHospitalForm = () => {
             updated_at: new Date().toISOString(),
             deleted_at: null
         });
-        setLocalArrayInputs({ certifications: '', available_specialities: '' });
+        setLocalArrayInputs({ certifications: '', available_specialities: '', available_treatments: '', });
         setDoctorList([]);
         localStorage.removeItem(STORAGE_KEY);
         setCurrentStep(1);

@@ -42,10 +42,12 @@ export default function SpecialityPage({ params }) {
           axios.get(`${API}/doctors?specialty=${encodeURIComponent(specialityNameEn)}`, { withCredentials: true }),
         ]);
 
-        if (treatRes.status === 'fulfilled') {
-          const d = treatRes.value.data;
-          setTreatments(Array.isArray(d) ? d : (d?.data || []));
-        }
+       if (treatRes.status === 'fulfilled') {
+  const d = treatRes.value.data;
+  const list = Array.isArray(d) ? d : (Array.isArray(d?.data) ? d.data : []);
+  setTreatments(list);
+  console.log('treatments loaded:', list.length, list); // remove after confirming
+}
         if (hospRes.status === 'fulfilled') {
           const d = hospRes.value.data;
           setHospitals(Array.isArray(d) ? d : (d?.data || []));
