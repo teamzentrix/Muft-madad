@@ -1,4 +1,4 @@
-const { createTreatmentService, getAllTreatmentService, getTreatmentBySpecialtyIdService } = require("../services/treatment.services")
+ const { createTreatmentService, getAllTreatmentService, getTreatmentBySpecialtyIdService, updateTreatmentService } = require("../services/treatment.services")
 
 
 const createTreatmentController = async (req, res) => {
@@ -62,4 +62,18 @@ const getTreatmentBySpecialtyIdController = async (req, res) => {
     }
 };
 
-module.exports = { createTreatmentController, getAllTreatmentController, getTreatmentBySpecialtyIdController }
+const updateTreatmentController = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const result = await updateTreatmentService(id, req.body);
+        return res.status(200).json({ success: true, data: result });
+    } catch (error) {
+        console.error('Error in updateTreatment controller:', error);
+        return res.status(400).json({
+            success: false,
+            message: error.message || 'Failed to update treatment',
+        });
+    }
+};
+
+module.exports = { createTreatmentController, getAllTreatmentController, getTreatmentBySpecialtyIdController, updateTreatmentController }

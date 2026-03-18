@@ -48,10 +48,45 @@ const deleteSpecialityService = async (id) => {
     return { success: true, data: result.rows[0] };
 };
 
+// ✅ Added — update speciality by id
+const updateSpecialityService = async (id, data) => {
+    const {
+        name_en, name_hi, slug, image,
+        description_en, description_hi, is_active
+    } = data;
+
+    const result = await pool.query(
+        `UPDATE specialities SET
+            name_en        = COALESCE($1, name_en),
+            name_hi        = COALESCE($2, name_hi),
+            slug           = COALESCE($3, slug),
+            image          = COALESCE($4, image),
+            description_en = COALESCE($5, description_en),
+            description_hi = COALESCE($6, description_hi),
+            is_active      = COALESCE($7, is_active),
+            updated_at     = NOW()
+         WHERE id = $8
+         RETURNING *`,
+        [
+            name_en        || null,
+            name_hi        || null,
+            slug           || null,
+            image          || null,
+            description_en || null,
+            description_hi || null,
+            is_active !== undefined ? is_active : null,
+            id
+        ]
+    );
+    if (!result.rows[0]) throw new Error('Speciality not found');
+    return { success: true, data: result.rows[0] };
+};
+
 module.exports = {
     createSpecialityService,
     getAllSpecialitiesService,
     getSpecialityBySlugService,
     getSpecialityByIdService,
     deleteSpecialityService,
+    updateSpecialityService,  // ✅
 };

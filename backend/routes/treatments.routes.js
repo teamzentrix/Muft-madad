@@ -1,6 +1,6 @@
 const router = require('express').Router();
 
-const { createTreatmentController, getAllTreatmentController, getTreatmentBySpecialtyIdController } = require('../controllers/treatment.controller')
+const { createTreatmentController, getAllTreatmentController, getTreatmentBySpecialtyIdController,updateTreatmentController } = require('../controllers/treatment.controller')
 
 
 
@@ -8,6 +8,7 @@ const { createTreatmentController, getAllTreatmentController, getTreatmentBySpec
 router.post('/create', createTreatmentController);
 router.get('/getAll', getAllTreatmentController);
 router.get('/getBySpecialty/:specialty_id', getTreatmentBySpecialtyIdController);
+router.put('/:id', updateTreatmentController);
 
 module.exports = router;
 

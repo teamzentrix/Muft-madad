@@ -9,22 +9,22 @@ const HeroData = {
     title: 'With Muft Madad',
     subtitle: 'Get Your Treatment Free',
     points: [
-      'Free OPD',
-      'Up to 60% discount on diagnostics',
-      'Ground level assistance by Muft Madad Saathi',
-      'Post-surgery care and support'
+      'Free OPD (Outpatient Department) services for all patients.',
+      '50% discount on all diagnostic tests.',
+      'Medicines supplied free of cost at the time of admission.',
+      'Free treatment, including all surgical procedures, for patients aged above 70 years.'
     ],
     button: 'Call Now'
   },
   hi: {
     title: 'मुफ्त मदद के साथ',
     subtitle: 'अपना इलाज मुफ्त में करवाएं',
-    points: [
-      'मुफ्त ओपीडी',
-      'डायग्नोस्टिक्स पर 60% तक की बचत',
-      'मुफ्त मदद साथी द्वारा जमीनी स्तर पर सहायता',
-      'सर्जरी के बाद देखभाल और सहायता'
-    ],
+   points: [
+  'सभी मरीजों के लिए निःशुल्क ओपीडी (बाह्य रोगी विभाग) सेवाएं।',
+  'सभी जांचों पर 50% की छूट।',
+  'भर्ती के समय दवाइयाँ निःशुल्क उपलब्ध कराई जाती हैं।',
+  '70 वर्ष से अधिक आयु के मरीजों के लिए सभी शल्य क्रियाओं सहित निःशुल्क उपचार।'
+],
     button: 'अभी कॉल करें'
   }
 };
