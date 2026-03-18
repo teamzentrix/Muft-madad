@@ -61,13 +61,13 @@ const CountUp = ({ end, duration = 2000, suffix = '' }) => {
 
 const TreatmentItem = ({ icon, label, onClick }) => (
   <div
-    className="flex flex-col items-center gap-3 p-4 cursor-pointer hover:bg-gray-100 rounded-lg transition hover:shadow-lg hover:scale-105"
+    className="flex flex-col items-center gap-3 p-4 cursor-pointer hover:bg-gray-50 rounded-lg transition hover:shadow-lg hover:scale-105"
     onClick={onClick}
   >
-    <div className="w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center bg-white shadow-md p-2">
-      <img src={icon} alt={label} className="w-full h-full object-contain" />
+    <div className="w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center  shadow-md p-2">
+      <img src={icon} alt={label} className="w-full h-full object-cover" />
     </div>
-    <p className="text-center text-sm sm:text-base font-medium text-gray-800 leading-tight">{label}</p>
+    <p className="text-center text-sm sm:text-base font-small text-gray-800 leading-tight">{label}</p>
   </div>
 );
 
