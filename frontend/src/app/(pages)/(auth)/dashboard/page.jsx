@@ -54,8 +54,18 @@ function ConfirmModal({ message, onConfirm, onCancel }) {
           <p className="text-gray-800 font-semibold text-lg">{message}</p>
           <p className="text-gray-500 text-sm">This action cannot be undone.</p>
           <div className="flex gap-3 w-full mt-2">
-            <button onClick={onCancel} className="flex-1 py-3 rounded-xl border border-gray-200 text-gray-600 font-medium hover:bg-gray-50">Cancel</button>
-            <button onClick={onConfirm} className="flex-1 py-3 rounded-xl bg-red-500 text-white font-medium hover:bg-red-600">Delete</button>
+            <button
+              onClick={onCancel}
+              className="flex-1 py-3 rounded-xl border border-gray-200 text-gray-600 font-medium hover:bg-gray-50"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={onConfirm}
+              className="flex-1 py-3 rounded-xl bg-red-500 text-white font-medium hover:bg-red-600"
+            >
+              Delete
+            </button>
           </div>
         </div>
       </div>
@@ -176,17 +186,25 @@ function ListPage({
       const result = res.data?.data ?? res.data;
       setData(Array.isArray(result) ? result : []);
     } catch {
-      setToast({ msg: 'Failed to load data', type: 'error' });
-    } finally { setLoading(false); }
+      setToast({ msg: "Failed to load data", type: "error" });
+    } finally {
+      setLoading(false);
+    }
   }, [fetchUrl]);
 
-  useEffect(() => { fetchData(); }, [fetchData]);
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   const handleDelete = async () => {
     try {
-      await axios.delete(`${deleteUrl}/${deleteTarget[idField]}`, { withCredentials: true });
-      setToast({ msg: 'Deleted successfully!', type: 'success' });
-      setData(prev => prev.filter(d => d[idField] !== deleteTarget[idField]));
+      await axios.delete(`${deleteUrl}/${deleteTarget[idField]}`, {
+        withCredentials: true,
+      });
+      setToast({ msg: "Deleted successfully!", type: "success" });
+      setData((prev) =>
+        prev.filter((d) => d[idField] !== deleteTarget[idField])
+      );
     } catch {
       setToast({ msg: 'Delete failed.', type: 'error' });
     } finally { setDeleteTarget(null); }
@@ -235,21 +253,33 @@ function ListPage({
       <div className="flex items-center justify-between mb-6">
         <div>
           <h2 className="text-3xl font-bold text-gray-800">{title}</h2>
-          <p className="text-gray-500 text-sm mt-1">{data.length} total records</p>
+          <p className="text-gray-500 text-sm mt-1">
+            {data.length} total records
+          </p>
         </div>
         <div className="flex items-center gap-3">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
-            <input value={search} onChange={e => setSearch(e.target.value)}
-              placeholder="Search..." className="pl-9 pr-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 w-56 text-sm" />
+            <input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search..."
+              className="pl-9 pr-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 w-56 text-sm"
+            />
           </div>
-          <button onClick={fetchData} className="p-2 hover:bg-gray-100 rounded-xl" title="Refresh">
+          <button
+            onClick={fetchData}
+            className="p-2 hover:bg-gray-100 rounded-xl"
+            title="Refresh"
+          >
             <RefreshCw className="w-5 h-5 text-gray-600" />
           </button>
           {addKey && (
-            <button onClick={() => setPage(addKey)}
+            <button
+              onClick={() => setPage(addKey)}
               className="flex items-center gap-2 px-4 py-2 rounded-xl text-white text-sm font-medium shadow"
-              style={{ background: grad }}>
+              style={{ background: grad }}
+            >
               <Plus className="w-4 h-4" /> Add New
             </button>
           )}
@@ -272,17 +302,31 @@ function ListPage({
             <table className="w-full">
               <thead>
                 <tr className="bg-gray-50 border-b border-gray-200">
-                  <th className="text-left py-4 px-5 text-xs font-bold text-gray-500 uppercase tracking-wider">#</th>
-                  {columns.map(col => (
-                    <th key={col.key} className="text-left py-4 px-5 text-xs font-bold text-gray-500 uppercase tracking-wider">{col.label}</th>
+                  <th className="text-left py-4 px-5 text-xs font-bold text-gray-500 uppercase tracking-wider">
+                    #
+                  </th>
+                  {columns.map((col) => (
+                    <th
+                      key={col.key}
+                      className="text-left py-4 px-5 text-xs font-bold text-gray-500 uppercase tracking-wider"
+                    >
+                      {col.label}
+                    </th>
                   ))}
-                  <th className="text-left py-4 px-5 text-xs font-bold text-gray-500 uppercase tracking-wider">Actions</th>
+                  <th className="text-left py-4 px-5 text-xs font-bold text-gray-500 uppercase tracking-wider">
+                    Actions
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {filtered.map((item, idx) => (
-                  <tr key={item[idField] ?? idx} className="border-b border-gray-100 hover:bg-gray-50 transition-all">
-                    <td className="py-4 px-5 text-sm text-gray-500">{idx + 1}</td>
+                  <tr
+                    key={item[idField] ?? idx}
+                    className="border-b border-gray-100 hover:bg-gray-50 transition-all"
+                  >
+                    <td className="py-4 px-5 text-sm text-gray-500">
+                      {idx + 1}
+                    </td>
                     {renderRow(item)}
                     <td className="py-4 px-5">
                       <div className="flex items-center gap-1">
@@ -335,10 +379,10 @@ function SpecialitiesListPage({ setPage }) {
         { key: 'is_active',      label: 'Is Active',        type: 'checkbox' },
       ]}
       columns={[
-        { key: 'name_en',   label: 'Name (EN)' },
-        { key: 'name_hi',   label: 'Name (HI)' },
-        { key: 'slug',      label: 'Slug' },
-        { key: 'is_active', label: 'Status' },
+        { key: "name_en", label: "Name (EN)" },
+        { key: "name_hi", label: "Name (HI)" },
+        { key: "slug", label: "Slug" },
+        { key: "is_active", label: "Status" },
       ]}
       renderRow={item => (<>
         <td className="py-4 px-5">
@@ -443,11 +487,11 @@ function HospitalsListPage({ setPage }) {
         { key: 'meta_description',       label: 'Meta Description',type: 'textarea' },
       ]}
       columns={[
-        { key: 'name',      label: 'Name' },
-        { key: 'city',      label: 'City' },
-        { key: 'state',     label: 'State' },
-        { key: 'phone',     label: 'Phone' },
-        { key: 'is_active', label: 'Status' },
+        { key: "name", label: "Name" },
+        { key: "city", label: "City" },
+        { key: "state", label: "State" },
+        { key: "phone", label: "Phone" },
+        { key: "is_active", label: "Status" },
       ]}
       renderRow={item => (<>
         <td className="py-4 px-5">
@@ -537,26 +581,32 @@ function TreatmentsListPage({ setPage }) {
 
 /* ─── Reviews List ───────────────────────────────────────────────────────────*/
 function ReviewsListPage({ setPage }) {
-  const [data, setData]       = useState([]);
+  const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [search, setSearch]   = useState('');
-  const [toast, setToast]     = useState(null);
+  const [search, setSearch] = useState("");
+  const [toast, setToast] = useState(null);
 
   const fetchData = async () => {
     setLoading(true);
     try {
-      const res = await axios.get(`${API}/users/reviews`, { withCredentials: true });
+      const res = await axios.get(`${API}/users/reviews`, {
+        withCredentials: true,
+      });
       const result = res.data?.data ?? res.data;
       setData(Array.isArray(result) ? result : []);
-    } catch { setToast({ msg: 'Failed to load reviews', type: 'error' }); }
-    finally { setLoading(false); }
+    } catch {
+      setToast({ msg: "Failed to load reviews", type: "error" });
+    } finally {
+      setLoading(false);
+    }
   };
   useEffect(() => { fetchData(); }, []);
 
-  const filtered = data.filter(r =>
-    r.name?.toLowerCase().includes(search.toLowerCase()) ||
-    r.treatment?.toLowerCase().includes(search.toLowerCase()) ||
-    r.city?.toLowerCase().includes(search.toLowerCase())
+  const filtered = data.filter(
+    (r) =>
+      r.name?.toLowerCase().includes(search.toLowerCase()) ||
+      r.treatment?.toLowerCase().includes(search.toLowerCase()) ||
+      r.city?.toLowerCase().includes(search.toLowerCase())
   );
   const stars = n => '★'.repeat(n) + '☆'.repeat(5 - n);
 
@@ -566,13 +616,19 @@ function ReviewsListPage({ setPage }) {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h2 className="text-3xl font-bold text-gray-800">All Reviews</h2>
-          <p className="text-gray-500 text-sm mt-1">{data.length} total records</p>
+          <p className="text-gray-500 text-sm mt-1">
+            {data.length} total records
+          </p>
         </div>
         <div className="flex items-center gap-3">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
-            <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search..."
-              className="pl-9 pr-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 w-56 text-sm" />
+            <input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search..."
+              className="pl-9 pr-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 w-56 text-sm"
+            />
           </div>
           <button onClick={fetchData} className="p-2 hover:bg-gray-100 rounded-xl"><RefreshCw className="w-5 h-5 text-gray-600" /></button>
           <button onClick={() => setPage('add-review')}
@@ -583,7 +639,9 @@ function ReviewsListPage({ setPage }) {
       </div>
       <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
         {loading ? (
-          <div className="flex items-center justify-center py-20 text-gray-400"><RefreshCw className="w-6 h-6 animate-spin mr-3" /> Loading...</div>
+          <div className="flex items-center justify-center py-20 text-gray-400">
+            <RefreshCw className="w-6 h-6 animate-spin mr-3" /> Loading...
+          </div>
         ) : filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 text-gray-400"><Star className="w-12 h-12 mb-3 opacity-20" /><p>No reviews found</p></div>
         ) : (
@@ -591,21 +649,53 @@ function ReviewsListPage({ setPage }) {
             <table className="w-full">
               <thead>
                 <tr className="bg-gray-50 border-b border-gray-200">
-                  {['#','Name','Treatment','City','Rating','Date','Description'].map(h => (
-                    <th key={h} className="text-left py-4 px-5 text-xs font-bold text-gray-500 uppercase tracking-wider">{h}</th>
+                  {[
+                    "#",
+                    "Name",
+                    "Treatment",
+                    "City",
+                    "Rating",
+                    "Date",
+                    "Description",
+                  ].map((h) => (
+                    <th
+                      key={h}
+                      className="text-left py-4 px-5 text-xs font-bold text-gray-500 uppercase tracking-wider"
+                    >
+                      {h}
+                    </th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 {filtered.map((item, idx) => (
-                  <tr key={item.id ?? idx} className="border-b border-gray-100 hover:bg-gray-50">
-                    <td className="py-4 px-5 text-sm text-gray-500">{idx + 1}</td>
-                    <td className="py-4 px-5 font-semibold text-gray-800 text-sm">{item.name}</td>
-                    <td className="py-4 px-5 text-sm text-gray-600">{item.treatment || '—'}</td>
-                    <td className="py-4 px-5 text-sm text-gray-600">{item.city || '—'}</td>
-                    <td className="py-4 px-5 text-yellow-500 text-sm">{stars(item.rating ?? 0)}</td>
-                    <td className="py-4 px-5 text-sm text-gray-600">{item.date ? new Date(item.date).toLocaleDateString() : '—'}</td>
-                    <td className="py-4 px-5 text-sm text-gray-600 max-w-xs truncate">{item.description || '—'}</td>
+                  <tr
+                    key={item.id ?? idx}
+                    className="border-b border-gray-100 hover:bg-gray-50"
+                  >
+                    <td className="py-4 px-5 text-sm text-gray-500">
+                      {idx + 1}
+                    </td>
+                    <td className="py-4 px-5 font-semibold text-gray-800 text-sm">
+                      {item.name}
+                    </td>
+                    <td className="py-4 px-5 text-sm text-gray-600">
+                      {item.treatment || "—"}
+                    </td>
+                    <td className="py-4 px-5 text-sm text-gray-600">
+                      {item.city || "—"}
+                    </td>
+                    <td className="py-4 px-5 text-yellow-500 text-sm">
+                      {stars(item.rating ?? 0)}
+                    </td>
+                    <td className="py-4 px-5 text-sm text-gray-600">
+                      {item.date
+                        ? new Date(item.date).toLocaleDateString()
+                        : "—"}
+                    </td>
+                    <td className="py-4 px-5 text-sm text-gray-600 max-w-xs truncate">
+                      {item.description || "—"}
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -863,8 +953,11 @@ export default function HospitalDashboard() {
 
   useEffect(() => {
     const verifyAuth = async () => {
-      const token = localStorage.getItem('authToken');
-      if (!token) { router.replace('/login'); return; }
+      const token = localStorage.getItem("authToken");
+      if (!token) {
+        router.replace("/login");
+        return;
+      }
       try {
         await axios.get(`${API}/auth/check-auth`, {
           headers: { Authorization: `Bearer ${token}` },
@@ -872,9 +965,9 @@ export default function HospitalDashboard() {
         });
         setAuthChecked(true);
       } catch {
-        localStorage.removeItem('authToken');
-        localStorage.removeItem('user');
-        router.replace('/login');
+        localStorage.removeItem("authToken");
+        localStorage.removeItem("user");
+        router.replace("/login");
       }
     };
     verifyAuth();

@@ -12,6 +12,7 @@ import Link from 'next/link';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 
+
 const API = 'http://localhost:4000/api';
 
 /* ══════════════════════════════════════════════════════
@@ -222,38 +223,42 @@ const DoctorsTab = ({ doctors, loading }) => {
       {doctors?.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {doctors.map((doc, i) => (
-            <div key={doc.uuid || i} className="flex gap-4 p-4 bg-gray-50 border border-gray-100 rounded-xl hover:border-blue-100 transition-colors">
-              {doc.photo ? (
-                <img src={doc.photo} alt={doc.name}
-                  className="w-12 h-12 rounded-full object-cover border border-gray-200 shrink-0" />
-              ) : (
-                <div className="w-12 h-12 rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center shrink-0 text-lg">
-                  👨‍⚕️
-                </div>
-              )}
-              <div className="min-w-0 flex-1">
-                <div className="flex items-center gap-1.5 mb-0.5">
-                  <p className="text-sm font-semibold text-gray-900 truncate">{doc.name}</p>
-                  {doc.is_verified && <CheckCircle className="w-3.5 h-3.5 text-green-500 shrink-0" />}
-                </div>
-                {doc.specialities?.length > 0 && (
-                  <p className="text-xs text-blue-600 mt-0.5">{doc.specialities.join(', ')}</p>
-                )}
-                {doc.degrees?.length > 0 && (
-                  <p className="text-xs text-gray-400 mt-0.5">{doc.degrees.join(', ')}</p>
-                )}
-                {doc.experience_in_years && (
-                  <p className="text-xs text-gray-400 mt-0.5">🩺 {doc.experience_in_years} yrs experience</p>
-                )}
-                {doc.consultation_fee && (
-                  <p className="text-xs text-green-600 font-semibold mt-0.5">₹{doc.consultation_fee} consultation</p>
-                )}
-                {doc.average_rating > 0 && (
-                  <p className="text-xs text-yellow-500 mt-0.5">⭐ {doc.average_rating}/5</p>
-                )}
-              </div>
-            </div>
-          ))}
+  <Link
+    href={`/allDoctors/${doc.uuid}`}
+    key={doc.uuid || i}
+    className="flex gap-4 p-4 bg-gray-50 border border-gray-100 rounded-xl hover:border-blue-100 hover:bg-blue-50/40 transition-colors cursor-pointer"
+  >
+    {doc.photo ? (
+      <img src={doc.photo} alt={doc.name}
+        className="w-12 h-12 rounded-full object-cover border border-gray-200 shrink-0" />
+    ) : (
+      <div className="w-12 h-12 rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center shrink-0 text-lg">
+        👨‍⚕️
+      </div>
+    )}
+    <div className="min-w-0 flex-1">
+      <div className="flex items-center gap-1.5 mb-0.5">
+        <p className="text-sm font-semibold text-gray-900 truncate">{doc.name}</p>
+        {doc.is_verified && <CheckCircle className="w-3.5 h-3.5 text-green-500 shrink-0" />}
+      </div>
+      {doc.specialities?.length > 0 && (
+        <p className="text-xs text-blue-600 mt-0.5">{doc.specialities.join(', ')}</p>
+      )}
+      {doc.degrees?.length > 0 && (
+        <p className="text-xs text-gray-400 mt-0.5">{doc.degrees.join(', ')}</p>
+      )}
+      {doc.experience_in_years && (
+        <p className="text-xs text-gray-400 mt-0.5">🩺 {doc.experience_in_years} yrs experience</p>
+      )}
+      {doc.consultation_fee && (
+        <p className="text-xs text-green-600 font-semibold mt-0.5">₹{doc.consultation_fee} consultation</p>
+      )}
+      {doc.average_rating > 0 && (
+        <p className="text-xs text-yellow-500 mt-0.5">⭐ {doc.average_rating}/5</p>
+      )}
+    </div>
+  </Link>  
+))}
         </div>
       ) : (
         <EmptyState icon={<Users className="w-8 h-8" />} msg="No doctors found serving at this hospital." />
