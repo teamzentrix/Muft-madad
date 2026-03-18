@@ -52,7 +52,7 @@ const getTreatmentBySpecialtyIdController = async (req, res) => {
         }
 
         const result = await getTreatmentBySpecialtyIdService(specialty_id);
-        return res.status(200).json(result);
+        return res.status(200).json({ success: true, data: result });
     } catch (error) {
         console.error('Error in getTreatmentBySpecialtyId controller:', error);
         return res.status(404).json({
