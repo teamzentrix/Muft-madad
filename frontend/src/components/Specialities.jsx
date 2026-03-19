@@ -12,7 +12,8 @@ export default function OurSpecialities() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchSpecialities = async () => {
+    const fetchSpecialities = async () => {;
+      bnj 
       try {
         setLoading(true);
         const res = await axios.get('http://localhost:4000/api/specialities', {
