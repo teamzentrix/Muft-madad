@@ -168,24 +168,22 @@ const getHospitalsByCityService = async (city) => {
 };
 
 const updateHospitalService = async (id, data) => {
-    const {
-        name, photo, slug, phone, email,
-        address, city, state, pincode, country,
-        location, about, timing_display,
-        certifications, total_doctors, total_specialities,
-        is_verified, is_active,
-        meta_title, meta_description,
-        available_specialities,
-        available_services,
-        gallery_images,
-    } = data;
+    const existing = await pool.query(
+        'SELECT * FROM hospitals WHERE id = $1 AND deleted_at IS NULL', [id]
+    );
+    if (!existing.rows[0]) return null;
 
-    const pointValue = toPoint(location);
+    // Merge existing data with new data — only override what was sent
+    const merged = { ...existing.rows[0], ...Object.fromEntries(
+        Object.entries(data).filter(([_, v]) => v !== null && v !== undefined && v !== '')
+    )};
+
+    const pointValue = toPoint(merged.location);
 
     const query = `
         UPDATE hospitals SET
-            name = $1,  photo = $2,  slug = $3,  phone = $4,  email = $5,
-            address = $6,  city = $7,  state = $8,  pincode = $9,  country = $10,
+            name = $1, photo = $2, slug = $3, phone = $4, email = $5,
+            address = $6, city = $7, state = $8, pincode = $9, country = $10,
             location = ${pointValue ? `point($11)` : `$11`},
             about = $12, timing_display = $13,
             certifications = $14, total_doctors = $15, total_specialities = $16,
@@ -194,36 +192,38 @@ const updateHospitalService = async (id, data) => {
             available_specialities = $21,
             available_services = $22,
             gallery_images = $23,
+            available_treatments = $24,
             updated_at = NOW()
-        WHERE id = $24 AND deleted_at IS NULL
+        WHERE id = $25 AND deleted_at IS NULL
         RETURNING *
     `;
 
     const values = [
-        name,
-        photo || null,
-        slug,
-        phone,
-        email,
-        address,
-        city,
-        state,
-        pincode || null,
-        country,
-        pointValue,                                        // $11
-        about || null,                                     // $12
-        timing_display || null,                            // $13
-        certifications || [],                              // $14
-        total_doctors || 0,                                // $15
-        total_specialities || 0,                           // $16
-        is_verified || false,                              // $17
-        is_active !== undefined ? is_active : true,        // $18
-        meta_title || null,                                // $19
-        meta_description || null,                          // $20
-        available_specialities || [],                      // $21
-        available_services || [],                          // $22
-        gallery_images || [],                              // $23
-        id                                                 // $24
+        merged.name,
+        merged.photo || null,
+        merged.slug,
+        merged.phone,
+        merged.email,
+        merged.address,
+        merged.city,
+        merged.state,
+        merged.pincode || null,
+        merged.country,
+        pointValue,
+        merged.about || null,
+        merged.timing_display || null,
+        merged.certifications || [],
+        merged.total_doctors || 0,
+        merged.total_specialities || 0,
+        merged.is_verified || false,
+        merged.is_active !== undefined ? merged.is_active : true,
+        merged.meta_title || null,
+        merged.meta_description || null,
+        merged.available_specialities || [],
+        merged.available_services || [],
+        merged.gallery_images || [],
+        merged.available_treatments || [],
+        id
     ];
 
     const result = await pool.query(query, values);

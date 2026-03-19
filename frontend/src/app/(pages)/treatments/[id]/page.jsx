@@ -408,7 +408,9 @@ export default function TreatmentPage({ params }) {
                                 ) : (
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                                         {hospitals.map((h) => (
-                                            <div key={h.id || h.uuid} className="bg-white rounded-xl border border-gray-200 hover:border-blue-300 hover:shadow-md transition-all overflow-hidden">
+                                            <div key={h.id || h.uuid} 
+                                            onClick={() => router.push(`/allHospitals/${h.id}`)}
+                                            className="bg-white rounded-xl border border-gray-200 hover:border-blue-300 hover:shadow-md transition-all overflow-hidden">
                                                 {h.photo && <img src={h.photo} alt={h.name} className="w-full h-28 sm:h-32 object-cover" />}
                                                 <div className="p-3 sm:p-4">
                                                     <div className="flex items-start justify-between gap-2 mb-1">
@@ -435,7 +437,9 @@ export default function TreatmentPage({ params }) {
                                 ) : (
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                                         {doctors.map((doc) => (
-                                            <div key={doc.uuid || doc.id} className="bg-white rounded-xl border border-gray-200 hover:border-blue-300 hover:shadow-md transition-all p-3 sm:p-4 flex gap-3">
+                                            <div key={doc.uuid || doc.id}
+                                             onClick={() => router.push(`/allDoctors/${doc.uuid}`)}
+                                            className="bg-white rounded-xl border border-gray-200 hover:border-blue-300 hover:shadow-md transition-all p-3 sm:p-4 flex gap-3">
                                                 {doc.photo ? (
                                                     <img src={doc.photo} alt={doc.name} className="w-12 h-12 sm:w-14 sm:h-14 rounded-full object-cover border-2 border-blue-100 shrink-0" />
                                                 ) : (

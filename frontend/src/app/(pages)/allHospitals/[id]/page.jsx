@@ -115,9 +115,30 @@ const InfoRow = ({ icon: Icon, label, children }) => (
 /* ══════════════════════════════════════════════════════
    TAB: OVERVIEW
 ══════════════════════════════════════════════════════ */
+const KEY_POINTS = [
+  'Free OPD (Outpatient Department) services for all patients.',
+  '50% discount on all diagnostic tests.',
+  'Medicines supplied free of cost at the time of admission.',
+  'Free treatment, including all surgical procedures, for patients aged above 70 years.',
+];
+
 const OverviewTab = ({ h }) => (
   <div className="space-y-8">
-    {h.about && (
+
+    {/* Key Highlights — always shown */}
+    <div>
+      <SectionHeading>Key Highlights</SectionHeading>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        {KEY_POINTS.map((point, i) => (
+          <div key={i} className="flex items-start gap-3 p-4 bg-blue-50 border border-blue-100 rounded-xl">
+            <CheckCircle className="w-4 h-4 text-blue-500 shrink-0 mt-0.5" />
+            <p className="text-sm text-gray-700 leading-relaxed">{point}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    {h.about && (   // ← rest of your existing code continues unchanged
       <div>
         <SectionHeading>About</SectionHeading>
         <p className="text-sm text-gray-600 leading-7">{h.about}</p>

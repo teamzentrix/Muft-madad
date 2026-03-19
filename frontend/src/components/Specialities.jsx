@@ -89,9 +89,9 @@ export default function OurSpecialities() {
                 {/* Know more link */}
                 <button
                   onClick={() => handleSpecialityClick(speciality)}
-                  className="text-xs text-blue-600 hover:text-blue-800 hover:underline font-medium cursor-pointer bg-transparent border-none p-0"
+                  className="text-xs text-blue-600 hover:text-blue-800 underline font-medium cursor-pointer bg-transparent border-none p-0"
                 >
-                  {lang === 'en' ? 'know more' : 'विस्तार से जानें'}
+                  {lang === 'en' ? 'know more➜' : 'विस्तार से जानें'}
                 </button>
               </div>
             </div>
