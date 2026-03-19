@@ -148,10 +148,10 @@ export default function AddSpecialityForm() {
         </form>
 
         {/* ✅ Debug panel — remove in production */}
-        <div className="mt-6 p-4 bg-gray-100 rounded-lg">
+        {/* <div className="mt-6 p-4 bg-gray-100 rounded-lg">
           <p className="text-xs font-bold text-gray-500 mb-2">DEBUG — Current form data:</p>
           <pre className="text-xs text-gray-700 overflow-auto">{JSON.stringify(form, null, 2)}</pre>
-        </div>
+        </div> */}
       </div>
     </div>
   );

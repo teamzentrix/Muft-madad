@@ -8,6 +8,7 @@ import {
   ChevronLeft, ChevronRight, ClipboardList, Building2,
   Star, LogOut, Trash2, X, RefreshCw, AlertCircle,
   CheckCircle2, Plus, Layers, FileText, Eye, Pencil, Save,
+  Menu,
 } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import AdminDoctorForm    from "../add_doctors/page";
@@ -16,6 +17,7 @@ import TreatmentAdminForm from "../add_treatments/page";
 import ReviewForm         from "../add_user_reviews/page";
 import AddSpecialityForm  from "../add-speciality/page";
 import BlogBuilder        from "../../BlogBuilder/page";
+
 
 const API = "http://localhost:4000/api";
 const grad     = "linear-gradient(90deg,#2563eb,#10b981)";
@@ -34,9 +36,9 @@ function Badge({ active }) {
 function Toast({ msg, type, onClose }) {
   useEffect(() => { const t = setTimeout(onClose, 3000); return () => clearTimeout(t); }, []);
   return (
-    <div className={`fixed bottom-6 right-6 z-50 flex items-center gap-3 px-5 py-4 rounded-xl shadow-xl text-white font-medium text-sm ${type === "success" ? "bg-green-500" : "bg-red-500"}`}>
-      {type === "success" ? <CheckCircle2 className="w-5 h-5" /> : <AlertCircle className="w-5 h-5" />}
-      {msg}
+    <div className={`fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 flex items-center gap-3 px-4 sm:px-5 py-3 sm:py-4 rounded-xl shadow-xl text-white font-medium text-sm max-w-xs sm:max-w-sm ${type === "success" ? "bg-green-500" : "bg-red-500"}`}>
+      {type === "success" ? <CheckCircle2 className="w-5 h-5 shrink-0" /> : <AlertCircle className="w-5 h-5 shrink-0" />}
+      <span className="flex-1">{msg}</span>
       <button onClick={onClose}><X className="w-4 h-4 ml-2" /></button>
     </div>
   );
@@ -45,8 +47,8 @@ function Toast({ msg, type, onClose }) {
 /* ─── Confirm Modal ──────────────────────────────────────────────────────────*/
 function ConfirmModal({ message, onConfirm, onCancel }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-      <div className="bg-white rounded-2xl p-8 shadow-2xl max-w-sm w-full mx-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+      <div className="bg-white rounded-2xl p-6 sm:p-8 shadow-2xl max-w-sm w-full mx-4">
         <div className="flex flex-col items-center gap-4 text-center">
           <div className="w-14 h-14 rounded-full bg-red-100 flex items-center justify-center">
             <Trash2 className="w-7 h-7 text-red-500" />
@@ -73,10 +75,7 @@ function ConfirmModal({ message, onConfirm, onCancel }) {
   );
 }
 
-/* ─── Edit Drawer ────────────────────────────────────────────────────────────
-   Slide-in panel for editing any entity.
-   editFields: [{ key, label, type: 'text'|'number'|'textarea'|'checkbox', isArray? }]
-*/
+/* ─── Edit Drawer ────────────────────────────────────────────────────────────*/
 function EditDrawer({ title, item, fields, onSave, onClose, loading }) {
   const [form, setForm] = useState(() => {
     const init = {};
@@ -106,11 +105,12 @@ function EditDrawer({ title, item, fields, onSave, onClose, loading }) {
   return (
     <div className="fixed inset-0 z-50 flex">
       <div className="flex-1 bg-black/40" onClick={onClose} />
-      <div className="w-full max-w-lg bg-white shadow-2xl flex flex-col h-full">
+      {/* Drawer: full-width on mobile, max-lg on larger screens */}
+      <div className="w-full max-w-full sm:max-w-lg bg-white shadow-2xl flex flex-col h-full">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 shrink-0">
-          <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-            <Pencil className="w-5 h-5 text-blue-600" /> Edit {title}
+        <div className="flex items-center justify-between px-4 sm:px-6 py-4 border-b border-gray-100 shrink-0">
+          <h2 className="text-base sm:text-lg font-bold text-gray-900 flex items-center gap-2">
+            <Pencil className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600" /> Edit {title}
           </h2>
           <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-lg">
             <X className="w-5 h-5 text-gray-500" />
@@ -118,7 +118,7 @@ function EditDrawer({ title, item, fields, onSave, onClose, loading }) {
         </div>
 
         {/* Scrollable fields */}
-        <div className="flex-1 overflow-y-auto px-6 py-5 space-y-4">
+        <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-5 space-y-4">
           {fields.map(f => (
             <div key={f.key}>
               <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">
@@ -146,7 +146,7 @@ function EditDrawer({ title, item, fields, onSave, onClose, loading }) {
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-4 border-t border-gray-100 flex gap-3 shrink-0">
+        <div className="px-4 sm:px-6 py-4 border-t border-gray-100 flex gap-3 shrink-0">
           <button onClick={onClose} className="flex-1 py-2.5 border border-gray-200 text-gray-600 rounded-xl font-medium text-sm hover:bg-gray-50">
             Cancel
           </button>
@@ -166,8 +166,8 @@ function EditDrawer({ title, item, fields, onSave, onClose, loading }) {
 function ListPage({
   title, fetchUrl, deleteUrl, updateUrl, idField,
   columns, renderRow, addKey, setPage,
-  viewUrl,      // fn(item) => route string
-  editFields,   // field config array for EditDrawer
+  viewUrl,
+  editFields,
   entityName,
 }) {
   const router = useRouter();
@@ -229,7 +229,7 @@ function ListPage({
   );
 
   return (
-    <div className="p-8">
+    <div className="p-4 sm:p-6 lg:p-8">
       {deleteTarget && (
         <ConfirmModal
           message={`Delete this ${entityName || title.replace('All ', '')}?`}
@@ -250,23 +250,14 @@ function ListPage({
       {toast && <Toast msg={toast.msg} type={toast.type} onClose={() => setToast(null)} />}
 
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
         <div>
-          <h2 className="text-3xl font-bold text-gray-800">{title}</h2>
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-800">{title}</h2>
           <p className="text-gray-500 text-sm mt-1">
             {data.length} total records
           </p>
         </div>
-        <div className="flex items-center gap-3">
-          {/* <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
-            <input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search..."
-              className="pl-9 pr-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 w-56 text-sm"
-            />
-          </div> */}
+        <div className="flex items-center gap-2 sm:gap-3">
           <button
             onClick={fetchData}
             className="p-2 hover:bg-gray-100 rounded-xl"
@@ -277,16 +268,16 @@ function ListPage({
           {addKey && (
             <button
               onClick={() => setPage(addKey)}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl text-white text-sm font-medium shadow"
+              className="flex items-center gap-2 px-3 sm:px-4 py-2 rounded-xl text-white text-sm font-medium shadow"
               style={{ background: grad }}
             >
-              <Plus className="w-4 h-4" /> Add New
+              <Plus className="w-4 h-4" /> <span className="hidden xs:inline">Add New</span><span className="xs:hidden">Add</span>
             </button>
           )}
         </div>
       </div>
 
-      {/* Table */}
+      {/* Table — horizontally scrollable on small screens */}
       <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
         {loading ? (
           <div className="flex items-center justify-center py-20 text-gray-400">
@@ -299,21 +290,21 @@ function ListPage({
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full">
+            <table className="w-full min-w-[600px]">
               <thead>
                 <tr className="bg-gray-50 border-b border-gray-200">
-                  <th className="text-left py-4 px-5 text-xs font-bold text-gray-500 uppercase tracking-wider">
+                  <th className="text-left py-4 px-3 sm:px-5 text-xs font-bold text-gray-500 uppercase tracking-wider">
                     #
                   </th>
                   {columns.map((col) => (
                     <th
                       key={col.key}
-                      className="text-left py-4 px-5 text-xs font-bold text-gray-500 uppercase tracking-wider"
+                      className="text-left py-4 px-3 sm:px-5 text-xs font-bold text-gray-500 uppercase tracking-wider whitespace-nowrap"
                     >
                       {col.label}
                     </th>
                   ))}
-                  <th className="text-left py-4 px-5 text-xs font-bold text-gray-500 uppercase tracking-wider">
+                  <th className="text-left py-4 px-3 sm:px-5 text-xs font-bold text-gray-500 uppercase tracking-wider">
                     Actions
                   </th>
                 </tr>
@@ -324,26 +315,26 @@ function ListPage({
                     key={item[idField] ?? idx}
                     className="border-b border-gray-100 hover:bg-gray-50 transition-all"
                   >
-                    <td className="py-4 px-5 text-sm text-gray-500">
+                    <td className="py-3 sm:py-4 px-3 sm:px-5 text-sm text-gray-500">
                       {idx + 1}
                     </td>
                     {renderRow(item)}
-                    <td className="py-4 px-5">
+                    <td className="py-3 sm:py-4 px-3 sm:px-5">
                       <div className="flex items-center gap-1">
                         {viewUrl && (
                           <button onClick={() => router.push(viewUrl(item))}
-                            className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all" title="View">
+                            className="p-1.5 sm:p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all" title="View">
                             <Eye className="w-4 h-4" />
                           </button>
                         )}
                         {editFields && (
                           <button onClick={() => setEditTarget(item)}
-                            className="p-2 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition-all" title="Edit">
+                            className="p-1.5 sm:p-2 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition-all" title="Edit">
                             <Pencil className="w-4 h-4" />
                           </button>
                         )}
                         <button onClick={() => setDeleteTarget(item)}
-                          className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all" title="Delete">
+                          className="p-1.5 sm:p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all" title="Delete">
                           <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
@@ -385,16 +376,16 @@ function SpecialitiesListPage({ setPage }) {
         { key: "is_active", label: "Status" },
       ]}
       renderRow={item => (<>
-        <td className="py-4 px-5">
-          <div className="flex items-center gap-3">
-            {item.image ? <img src={item.image} alt="" className="w-9 h-9 rounded-lg object-cover border" />
-              : <div className="w-9 h-9 rounded-lg flex items-center justify-center text-white" style={{ background: '#6366f1' }}><Layers className="w-4 h-4" /></div>}
+        <td className="py-3 sm:py-4 px-3 sm:px-5">
+          <div className="flex items-center gap-2 sm:gap-3">
+            {item.image ? <img src={item.image} alt="" className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg object-cover border shrink-0" />
+              : <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg flex items-center justify-center text-white shrink-0" style={{ background: '#6366f1' }}><Layers className="w-4 h-4" /></div>}
             <span className="font-semibold text-gray-800 text-sm">{item.name_en}</span>
           </div>
         </td>
-        <td className="py-4 px-5 text-sm text-gray-600">{item.name_hi || '—'}</td>
-        <td className="py-4 px-5 text-sm text-gray-500 font-mono">{item.slug || '—'}</td>
-        <td className="py-4 px-5"><Badge active={item.is_active} /></td>
+        <td className="py-3 sm:py-4 px-3 sm:px-5 text-sm text-gray-600">{item.name_hi || '—'}</td>
+        <td className="py-3 sm:py-4 px-3 sm:px-5 text-sm text-gray-500 font-mono">{item.slug || '—'}</td>
+        <td className="py-3 sm:py-4 px-3 sm:px-5"><Badge active={item.is_active} /></td>
       </>)}
     />
   );
@@ -436,18 +427,18 @@ function DoctorsListPage({ setPage }) {
         { key: 'is_active',          label: 'Status' },
       ]}
       renderRow={item => (<>
-        <td className="py-4 px-5">
-          <div className="flex items-center gap-3">
-            {item.photo ? <img src={item.photo} alt="" className="w-9 h-9 rounded-full object-cover border" />
-              : <div className="w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-bold" style={{ background: gradCard }}>{item.name?.[0] ?? 'D'}</div>}
+        <td className="py-3 sm:py-4 px-3 sm:px-5">
+          <div className="flex items-center gap-2 sm:gap-3">
+            {item.photo ? <img src={item.photo} alt="" className="w-8 h-8 sm:w-9 sm:h-9 rounded-full object-cover border shrink-0" />
+              : <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center text-white text-sm font-bold shrink-0" style={{ background: gradCard }}>{item.name?.[0] ?? 'D'}</div>}
             <span className="font-semibold text-gray-800 text-sm">{item.name}</span>
           </div>
         </td>
-        <td className="py-4 px-5 text-sm text-gray-600">{item.email}</td>
-        <td className="py-4 px-5 text-sm text-gray-600">{Array.isArray(item.specialities) ? item.specialities.join(', ') : item.specialities || '—'}</td>
-        <td className="py-4 px-5 text-sm text-gray-600">{item.city || '—'}</td>
-        <td className="py-4 px-5 text-sm text-gray-600">{item.experience_in_years ?? '—'}</td>
-        <td className="py-4 px-5"><Badge active={item.is_active} /></td>
+        <td className="py-3 sm:py-4 px-3 sm:px-5 text-sm text-gray-600">{item.email}</td>
+        <td className="py-3 sm:py-4 px-3 sm:px-5 text-sm text-gray-600">{Array.isArray(item.specialities) ? item.specialities.join(', ') : item.specialities || '—'}</td>
+        <td className="py-3 sm:py-4 px-3 sm:px-5 text-sm text-gray-600">{item.city || '—'}</td>
+        <td className="py-3 sm:py-4 px-3 sm:px-5 text-sm text-gray-600">{item.experience_in_years ?? '—'}</td>
+        <td className="py-3 sm:py-4 px-3 sm:px-5"><Badge active={item.is_active} /></td>
       </>)}
     />
   );
@@ -494,17 +485,17 @@ function HospitalsListPage({ setPage }) {
         { key: "is_active", label: "Status" },
       ]}
       renderRow={item => (<>
-        <td className="py-4 px-5">
-          <div className="flex items-center gap-3">
-            {item.photo ? <img src={item.photo} alt="" className="w-9 h-9 rounded-lg object-cover border" />
-              : <div className="w-9 h-9 rounded-lg flex items-center justify-center text-white" style={{ background: gradCard }}><Building2 className="w-4 h-4" /></div>}
+        <td className="py-3 sm:py-4 px-3 sm:px-5">
+          <div className="flex items-center gap-2 sm:gap-3">
+            {item.photo ? <img src={item.photo} alt="" className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg object-cover border shrink-0" />
+              : <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg flex items-center justify-center text-white shrink-0" style={{ background: gradCard }}><Building2 className="w-4 h-4" /></div>}
             <span className="font-semibold text-gray-800 text-sm">{item.name}</span>
           </div>
         </td>
-        <td className="py-4 px-5 text-sm text-gray-600">{item.city || '—'}</td>
-        <td className="py-4 px-5 text-sm text-gray-600">{item.state || '—'}</td>
-        <td className="py-4 px-5 text-sm text-gray-600">{item.phone || '—'}</td>
-        <td className="py-4 px-5"><Badge active={item.is_active} /></td>
+        <td className="py-3 sm:py-4 px-3 sm:px-5 text-sm text-gray-600">{item.city || '—'}</td>
+        <td className="py-3 sm:py-4 px-3 sm:px-5 text-sm text-gray-600">{item.state || '—'}</td>
+        <td className="py-3 sm:py-4 px-3 sm:px-5 text-sm text-gray-600">{item.phone || '—'}</td>
+        <td className="py-3 sm:py-4 px-3 sm:px-5"><Badge active={item.is_active} /></td>
       </>)}
     />
   );
@@ -517,8 +508,8 @@ function TreatmentsListPage({ setPage }) {
     <ListPage
       title="All Treatments" entityName="Treatment"
       fetchUrl={`${API}/admin/getAll`}
-      deleteUrl={`${API}/admin`}          // adjust if you add a delete endpoint
-      updateUrl={`${API}/admin`}          // PUT /api/admin/:id
+      deleteUrl={`${API}/admin`}
+      updateUrl={`${API}/admin`}
       idField="id" addKey="add-treatment" setPage={setPage}
       viewUrl={item => `/treatment/${item.specialty_id}`}
       editFields={[
@@ -561,19 +552,19 @@ function TreatmentsListPage({ setPage }) {
         { key: 'success_rate',   label: 'Success Rate' },
       ]}
       renderRow={item => (<>
-        <td className="py-4 px-5">
-          <div className="flex items-center gap-3">
+        <td className="py-3 sm:py-4 px-3 sm:px-5">
+          <div className="flex items-center gap-2 sm:gap-3">
             {item.treatment_image
-              ? <img src={item.treatment_image} alt="" className="w-9 h-9 rounded-lg object-cover border" />
-              : <div className="w-9 h-9 rounded-lg flex items-center justify-center text-white" style={{ background: '#f97316' }}><ClipboardList className="w-4 h-4" /></div>}
+              ? <img src={item.treatment_image} alt="" className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg object-cover border shrink-0" />
+              : <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg flex items-center justify-center text-white shrink-0" style={{ background: '#f97316' }}><ClipboardList className="w-4 h-4" /></div>}
             <span className="font-semibold text-gray-800 text-sm">{item.name}</span>
           </div>
         </td>
-        <td className="py-4 px-5 text-sm text-gray-600">{item.specialty_id ?? '—'}</td>
-        <td className="py-4 px-5 text-sm text-gray-600">{item.surgery_duration || '—'}</td>
-        <td className="py-4 px-5 text-sm text-gray-600">{item.hospital_stay || '—'}</td>
-        <td className="py-4 px-5 text-sm text-gray-600">{item.recovery_time || '—'}</td>
-        <td className="py-4 px-5 text-sm text-gray-600">{item.success_rate || '—'}</td>
+        <td className="py-3 sm:py-4 px-3 sm:px-5 text-sm text-gray-600">{item.specialty_id ?? '—'}</td>
+        <td className="py-3 sm:py-4 px-3 sm:px-5 text-sm text-gray-600">{item.surgery_duration || '—'}</td>
+        <td className="py-3 sm:py-4 px-3 sm:px-5 text-sm text-gray-600">{item.hospital_stay || '—'}</td>
+        <td className="py-3 sm:py-4 px-3 sm:px-5 text-sm text-gray-600">{item.recovery_time || '—'}</td>
+        <td className="py-3 sm:py-4 px-3 sm:px-5 text-sm text-gray-600">{item.success_rate || '—'}</td>
       </>)}
     />
   );
@@ -611,28 +602,19 @@ function ReviewsListPage({ setPage }) {
   const stars = n => '★'.repeat(n) + '☆'.repeat(5 - n);
 
   return (
-    <div className="p-8">
+    <div className="p-4 sm:p-6 lg:p-8">
       {toast && <Toast msg={toast.msg} type={toast.type} onClose={() => setToast(null)} />}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
         <div>
-          <h2 className="text-3xl font-bold text-gray-800">All Reviews</h2>
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-800">All Reviews</h2>
           <p className="text-gray-500 text-sm mt-1">
             {data.length} total records
           </p>
         </div>
-        <div className="flex items-center gap-3">
-          {/* <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
-            <input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search..."
-              className="pl-9 pr-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 w-56 text-sm"
-            />
-          </div> */}
+        <div className="flex items-center gap-2 sm:gap-3">
           <button onClick={fetchData} className="p-2 hover:bg-gray-100 rounded-xl"><RefreshCw className="w-5 h-5 text-gray-600" /></button>
           <button onClick={() => setPage('add-review')}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl text-white text-sm font-medium shadow" style={{ background: grad }}>
+            className="flex items-center gap-2 px-3 sm:px-4 py-2 rounded-xl text-white text-sm font-medium shadow" style={{ background: grad }}>
             <Plus className="w-4 h-4" /> Add New
           </button>
         </div>
@@ -646,7 +628,7 @@ function ReviewsListPage({ setPage }) {
           <div className="flex flex-col items-center justify-center py-20 text-gray-400"><Star className="w-12 h-12 mb-3 opacity-20" /><p>No reviews found</p></div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full">
+            <table className="w-full min-w-[600px]">
               <thead>
                 <tr className="bg-gray-50 border-b border-gray-200">
                   {[
@@ -660,7 +642,7 @@ function ReviewsListPage({ setPage }) {
                   ].map((h) => (
                     <th
                       key={h}
-                      className="text-left py-4 px-5 text-xs font-bold text-gray-500 uppercase tracking-wider"
+                      className="text-left py-4 px-3 sm:px-5 text-xs font-bold text-gray-500 uppercase tracking-wider whitespace-nowrap"
                     >
                       {h}
                     </th>
@@ -673,27 +655,27 @@ function ReviewsListPage({ setPage }) {
                     key={item.id ?? idx}
                     className="border-b border-gray-100 hover:bg-gray-50"
                   >
-                    <td className="py-4 px-5 text-sm text-gray-500">
+                    <td className="py-3 sm:py-4 px-3 sm:px-5 text-sm text-gray-500">
                       {idx + 1}
                     </td>
-                    <td className="py-4 px-5 font-semibold text-gray-800 text-sm">
+                    <td className="py-3 sm:py-4 px-3 sm:px-5 font-semibold text-gray-800 text-sm whitespace-nowrap">
                       {item.name}
                     </td>
-                    <td className="py-4 px-5 text-sm text-gray-600">
+                    <td className="py-3 sm:py-4 px-3 sm:px-5 text-sm text-gray-600">
                       {item.treatment || "—"}
                     </td>
-                    <td className="py-4 px-5 text-sm text-gray-600">
+                    <td className="py-3 sm:py-4 px-3 sm:px-5 text-sm text-gray-600">
                       {item.city || "—"}
                     </td>
-                    <td className="py-4 px-5 text-yellow-500 text-sm">
+                    <td className="py-3 sm:py-4 px-3 sm:px-5 text-yellow-500 text-sm whitespace-nowrap">
                       {stars(item.rating ?? 0)}
                     </td>
-                    <td className="py-4 px-5 text-sm text-gray-600">
+                    <td className="py-3 sm:py-4 px-3 sm:px-5 text-sm text-gray-600 whitespace-nowrap">
                       {item.date
                         ? new Date(item.date).toLocaleDateString()
                         : "—"}
                     </td>
-                    <td className="py-4 px-5 text-sm text-gray-600 max-w-xs truncate">
+                    <td className="py-3 sm:py-4 px-3 sm:px-5 text-sm text-gray-600 max-w-xs truncate">
                       {item.description || "—"}
                     </td>
                   </tr>
@@ -735,17 +717,17 @@ function BlogsListPage({ setPage }) {
         { key: 'is_published', label: 'Status' },
       ]}
       renderRow={item => (<>
-        <td className="py-4 px-5">
-          <div className="flex items-center gap-3">
-            {item.bg_image ? <img src={item.bg_image} alt="" className="w-9 h-9 rounded-lg object-cover border" />
-              : <div className="w-9 h-9 rounded-lg bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-xs">B</div>}
+        <td className="py-3 sm:py-4 px-3 sm:px-5">
+          <div className="flex items-center gap-2 sm:gap-3">
+            {item.bg_image ? <img src={item.bg_image} alt="" className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg object-cover border shrink-0" />
+              : <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-xs shrink-0">B</div>}
             <span className="font-semibold text-gray-800 text-sm line-clamp-1">{item.title}</span>
           </div>
         </td>
-        <td className="py-4 px-5 text-sm text-gray-600">{item.tag || '—'}</td>
-        <td className="py-4 px-5 text-sm text-gray-600">{item.author || '—'}</td>
-        <td className="py-4 px-5 text-sm text-gray-600">{item.publish_date || '—'}</td>
-        <td className="py-4 px-5">
+        <td className="py-3 sm:py-4 px-3 sm:px-5 text-sm text-gray-600">{item.tag || '—'}</td>
+        <td className="py-3 sm:py-4 px-3 sm:px-5 text-sm text-gray-600">{item.author || '—'}</td>
+        <td className="py-3 sm:py-4 px-3 sm:px-5 text-sm text-gray-600 whitespace-nowrap">{item.publish_date || '—'}</td>
+        <td className="py-3 sm:py-4 px-3 sm:px-5">
           <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${item.is_published ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>
             {item.is_published ? 'Published' : 'Draft'}
           </span>
@@ -756,7 +738,7 @@ function BlogsListPage({ setPage }) {
 }
 
 /* ─── Sidebar ────────────────────────────────────────────────────────────────*/
-function Sidebar({ activePage, setPage }) {
+function Sidebar({ activePage, setPage, isOpen, onClose }) {
   const router = useRouter();
   const nav = [
     { icon: <Calendar className="w-5 h-5" />,     label: 'Dashboard',        key: 'dashboard' },
@@ -775,44 +757,77 @@ function Sidebar({ activePage, setPage }) {
     { icon: <Star className="w-5 h-5" />,          label: 'All Reviews',      key: 'list-reviews' },
     { icon: <FileText className="w-5 h-5" />,      label: 'All Blogs',        key: 'list-blogs' },
   ];
+
+  const handleNav = (key) => {
+    setPage(key);
+    onClose(); // close on mobile after selecting
+  };
+
   return (
-    <div className="fixed left-0 top-0 h-full w-64 bg-white shadow-xl z-10 flex flex-col overflow-y-auto">
-      <div className="p-6 flex-1">
-        <div className="flex items-center gap-2 mb-8">
-          <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: gradCard }}>
-            <Stethoscope className="w-4 h-4 text-white" />
+    <>
+      {/* Mobile overlay */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 bg-black/40 z-20 lg:hidden"
+          onClick={onClose}
+        />
+      )}
+
+      {/* Sidebar panel */}
+      <div className={`
+        fixed left-0 top-0 h-full w-64 bg-white shadow-xl z-30 flex flex-col overflow-y-auto
+        transition-transform duration-300 ease-in-out
+        ${isOpen ? 'translate-x-0' : '-translate-x-full'}
+        lg:translate-x-0
+      `}>
+        <div className="p-6 flex-1">
+          {/* Logo + close button on mobile */}
+          <div className="flex items-center justify-between gap-2 mb-8">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style={{ background: gradCard }}>
+                <Stethoscope className="w-4 h-4 text-white" />
+              </div>
+              <h1 className="text-xl font-bold" style={{ background: grad, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                MUFT MADAD
+              </h1>
+            </div>
+            <button
+              onClick={onClose}
+              className="lg:hidden p-1.5 hover:bg-gray-100 rounded-lg"
+            >
+              <X className="w-5 h-5 text-gray-500" />
+            </button>
           </div>
-          <h1 className="text-xl font-bold" style={{ background: grad, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-            MUFT MADAD
-          </h1>
+
+          <nav className="space-y-1">
+            {nav.map((item, idx) =>
+              item.divider ? (
+                <p key={idx} className="text-xs font-bold text-gray-400 uppercase tracking-widest px-2 pt-4 pb-1">{item.label}</p>
+              ) : (
+                <button key={item.key} onClick={() => handleNav(item.key)}
+                  className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all text-sm ${activePage === item.key ? 'text-white shadow-lg' : 'text-gray-600 hover:bg-gray-100'}`}
+                  style={activePage === item.key ? { background: grad } : {}}>
+                  {item.icon}
+                  <span className="font-medium">{item.label}</span>
+                </button>
+              )
+            )}
+          </nav>
         </div>
-        <nav className="space-y-1">
-          {nav.map((item, idx) =>
-            item.divider ? (
-              <p key={idx} className="text-xs font-bold text-gray-400 uppercase tracking-widest px-2 pt-4 pb-1">{item.label}</p>
-            ) : (
-              <button key={item.key} onClick={() => setPage(item.key)}
-                className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all text-sm ${activePage === item.key ? 'text-white shadow-lg' : 'text-gray-600 hover:bg-gray-100'}`}
-                style={activePage === item.key ? { background: grad } : {}}>
-                {item.icon}
-                <span className="font-medium">{item.label}</span>
-              </button>
-            )
-          )}
-        </nav>
+
+        <div className="p-6 border-t border-gray-100">
+          <button onClick={async () => {
+            try { await axios.post(`${API}/auth/logout`, {}, { withCredentials: true }); } catch {}
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('user');
+            router.replace('/login');
+          }} className="w-full flex items-center gap-3 px-4 py-3 text-red-500 hover:bg-red-50 rounded-xl transition-all">
+            <LogOut className="w-5 h-5" />
+            <span className="font-medium">Logout</span>
+          </button>
+        </div>
       </div>
-      <div className="p-6 border-t border-gray-100">
-        <button onClick={async () => {
-          try { await axios.post(`${API}/auth/logout`, {}, { withCredentials: true }); } catch {}
-          localStorage.removeItem('authToken');
-          localStorage.removeItem('user');
-          router.replace('/login');
-        }} className="w-full flex items-center gap-3 px-4 py-3 text-red-500 hover:bg-red-50 rounded-xl transition-all">
-          <LogOut className="w-5 h-5" />
-          <span className="font-medium">Logout</span>
-        </button>
-      </div>
-    </div>
+    </>
   );
 }
 
@@ -862,65 +877,63 @@ function DashboardPage({ setPage }) {
   ];
 
   return (
-    <div className="p-8">
-      <div className="flex items-center justify-between mb-8">
-        <h2 className="text-3xl font-bold text-gray-800">Hospital Dashboard</h2>
-        <div className="flex items-center gap-4">
-          {/* <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
-            <input type="text" placeholder="Search..." className="pl-10 pr-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 w-64" />
-          </div> */}
-          {/* <button className="p-2 hover:bg-gray-100 rounded-xl"><Bell className="w-6 h-6 text-gray-600" /></button>
-          <div className="w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold" style={{ background: gradCard }}>DR</div> */}
-        </div>
+    <div className="p-4 sm:p-6 lg:p-8">
+      <div className="flex items-center justify-between mb-6 sm:mb-8">
+        <h2 className="text-2xl sm:text-3xl font-bold text-gray-800">Hospital Dashboard</h2>
       </div>
 
-      <div className="grid grid-cols-5 gap-4 mb-8">
+      {/* Stat cards — 2 cols on mobile, 3 on md, 5 on xl */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-5 gap-3 sm:gap-4 mb-6 sm:mb-8">
         {statCards.map((s, i) => (
           <button key={i} onClick={() => setPage(s.key)}
-            className={`rounded-2xl p-6 shadow-lg text-left transition-transform hover:scale-105 ${s.primary ? 'text-white' : 'bg-white border border-gray-100'}`}
+            className={`rounded-2xl p-4 sm:p-6 shadow-lg text-left transition-transform hover:scale-105 ${s.primary ? 'text-white' : 'bg-white border border-gray-100'}`}
             style={s.primary ? { background: gradCard } : {}}>
-            <h3 className={`text-sm font-medium mb-2 ${s.primary ? 'text-blue-100' : 'text-gray-600'}`}>{s.label}</h3>
-            <p className={`text-4xl font-bold mb-1 ${s.primary ? 'text-white' : 'text-gray-800'}`}>{loading ? '...' : s.value}</p>
+            <h3 className={`text-xs sm:text-sm font-medium mb-1 sm:mb-2 ${s.primary ? 'text-blue-100' : 'text-gray-600'}`}>{s.label}</h3>
+            <p className={`text-2xl sm:text-4xl font-bold mb-1 ${s.primary ? 'text-white' : 'text-gray-800'}`}>{loading ? '...' : s.value}</p>
             <p className={`text-xs ${s.primary ? 'text-blue-200' : 'text-gray-400'}`}>Click to view all</p>
           </button>
         ))}
       </div>
 
-      <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 mb-6">
-        <h3 className="text-xl font-bold text-gray-800 mb-4">Quick Actions</h3>
-        <div className="grid grid-cols-5 gap-4">
+      {/* Quick actions */}
+      <div className="bg-white rounded-2xl p-4 sm:p-6 shadow-lg border border-gray-100 mb-4 sm:mb-6">
+        <h3 className="text-lg sm:text-xl font-bold text-gray-800 mb-4">Quick Actions</h3>
+        <div className="grid grid-cols-3 sm:grid-cols-5 gap-3 sm:gap-4">
           {quickActions.map(action => (
             <button key={action.key} onClick={() => setPage(action.key)}
-              className="flex flex-col items-center gap-3 p-5 rounded-xl border-2 border-dashed border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-all group">
-              <div className="w-12 h-12 rounded-xl flex items-center justify-center text-white shadow-md group-hover:scale-110 transition-transform" style={{ background: action.color }}>
+              className="flex flex-col items-center gap-2 sm:gap-3 p-3 sm:p-5 rounded-xl border-2 border-dashed border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-all group">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center text-white shadow-md group-hover:scale-110 transition-transform" style={{ background: action.color }}>
                 {action.icon}
               </div>
-              <span className="text-sm font-semibold text-gray-700 group-hover:text-blue-700">{action.label}</span>
+              <span className="text-xs sm:text-sm font-semibold text-gray-700 group-hover:text-blue-700 text-center leading-tight">{action.label}</span>
             </button>
           ))}
         </div>
       </div>
 
-      <div className="grid grid-cols-3 gap-6">
-        <div className="col-span-2 bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
-          <h3 className="text-xl font-bold text-gray-800 mb-4">Overview</h3>
-          <div className="grid grid-cols-3 gap-4">
+      {/* Overview + Calendar — stack on small, side-by-side on lg */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
+        {/* Overview takes 2/3 */}
+        <div className="lg:col-span-2 bg-white rounded-2xl p-4 sm:p-6 shadow-lg border border-gray-100">
+          <h3 className="text-lg sm:text-xl font-bold text-gray-800 mb-4">Overview</h3>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
             {statCards.map((s, i) => (
-              <div key={i} className="bg-gray-50 rounded-xl p-4 flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl flex items-center justify-center text-white shrink-0"
+              <div key={i} className="bg-gray-50 rounded-xl p-3 sm:p-4 flex items-center gap-3 sm:gap-4">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center text-white shrink-0"
                   style={{ background: ['#6366f1','#2563eb','#10b981','#f97316','#8b5cf6'][i] }}>
-                  {[<Layers className="w-5 h-5"/>,<Users className="w-5 h-5"/>,<Building2 className="w-5 h-5"/>,<ClipboardList className="w-5 h-5"/>,<Star className="w-5 h-5"/>][i]}
+                  {[<Layers className="w-4 h-4 sm:w-5 sm:h-5"/>,<Users className="w-4 h-4 sm:w-5 sm:h-5"/>,<Building2 className="w-4 h-4 sm:w-5 sm:h-5"/>,<ClipboardList className="w-4 h-4 sm:w-5 sm:h-5"/>,<Star className="w-4 h-4 sm:w-5 sm:h-5"/>][i]}
                 </div>
                 <div>
-                  <p className="text-2xl font-bold text-gray-800">{loading ? '...' : s.value}</p>
-                  <p className="text-xs text-gray-500">{s.label}</p>
+                  <p className="text-xl sm:text-2xl font-bold text-gray-800">{loading ? '...' : s.value}</p>
+                  <p className="text-xs text-gray-500 leading-tight">{s.label}</p>
                 </div>
               </div>
             ))}
           </div>
         </div>
-        <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
+
+        {/* Calendar takes 1/3 */}
+        <div className="bg-white rounded-2xl p-4 sm:p-6 shadow-lg border border-gray-100">
           <div className="flex items-center justify-between mb-4">
             <button onClick={() => setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1))}><ChevronLeft className="w-5 h-5 text-gray-600 hover:text-blue-500" /></button>
             <h3 className="font-bold text-gray-800 text-sm">{monthName}</h3>
@@ -945,10 +958,34 @@ function DashboardPage({ setPage }) {
   );
 }
 
+/* ─── Mobile Top Bar ─────────────────────────────────────────────────────────*/
+function MobileTopBar({ onMenuOpen }) {
+  return (
+    <div className="fixed top-0 left-0 right-0 z-10 bg-white border-b border-gray-200 px-4 py-3 flex items-center gap-3 lg:hidden" style={{ marginTop: '0' }}>
+      <button
+        onClick={onMenuOpen}
+        className="p-2 hover:bg-gray-100 rounded-xl"
+        aria-label="Open menu"
+      >
+        <Menu className="w-5 h-5 text-gray-700" />
+      </button>
+      <div className="flex items-center gap-2">
+        <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: gradCard }}>
+          <Stethoscope className="w-3.5 h-3.5 text-white" />
+        </div>
+        <span className="text-base font-bold" style={{ background: grad, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+          MUFT MADAD
+        </span>
+      </div>
+    </div>
+  );
+}
+
 /* ─── App Root ───────────────────────────────────────────────────────────────*/
 export default function HospitalDashboard() {
-  const [page, setPage]           = useState('dashboard');
+  const [page, setPage]             = useState('dashboard');
   const [authChecked, setAuthChecked] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -985,8 +1022,23 @@ export default function HospitalDashboard() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       <Navbar />
-      <Sidebar activePage={page} setPage={setPage} />
-      <div className="ml-64 pt-20">
+
+      {/* Mobile hamburger bar — sits below Navbar */}
+      <MobileTopBar onMenuOpen={() => setSidebarOpen(true)} />
+
+      {/* Sidebar — hidden on mobile unless open, always visible on lg+ */}
+      <Sidebar
+        activePage={page}
+        setPage={setPage}
+        isOpen={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+      />
+
+      {/* Main content:
+          - On mobile: full width, extra top padding to clear both Navbar + MobileTopBar
+          - On lg+: left margin for sidebar, standard top padding for just Navbar
+      */}
+      <div className="lg:ml-64 pt-28 lg:pt-20">
         {page === 'dashboard'         && <DashboardPage setPage={setPage} />}
         {page === 'add-speciality'    && <AddSpecialityForm />}
         {page === 'add-doctor'        && <AdminDoctorForm />}
@@ -1001,6 +1053,8 @@ export default function HospitalDashboard() {
         {page === 'list-reviews'      && <ReviewsListPage setPage={setPage} />}
         {page === 'list-blogs'        && <BlogsListPage setPage={setPage} />}
       </div>
+   
     </div>
+    
   );
 }
