@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import {
   Phone, MapPin, Clock, Users, Stethoscope, Star,
   AlertCircle, RefreshCw, ChevronLeft, ChevronRight,
