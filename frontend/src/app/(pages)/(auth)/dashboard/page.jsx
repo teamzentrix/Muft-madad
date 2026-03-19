@@ -258,7 +258,7 @@ function ListPage({
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <div className="relative">
+          {/* <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
             <input
               value={search}
@@ -266,7 +266,7 @@ function ListPage({
               placeholder="Search..."
               className="pl-9 pr-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 w-56 text-sm"
             />
-          </div>
+          </div> */}
           <button
             onClick={fetchData}
             className="p-2 hover:bg-gray-100 rounded-xl"
@@ -621,7 +621,7 @@ function ReviewsListPage({ setPage }) {
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <div className="relative">
+          {/* <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
             <input
               value={search}
@@ -629,7 +629,7 @@ function ReviewsListPage({ setPage }) {
               placeholder="Search..."
               className="pl-9 pr-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 w-56 text-sm"
             />
-          </div>
+          </div> */}
           <button onClick={fetchData} className="p-2 hover:bg-gray-100 rounded-xl"><RefreshCw className="w-5 h-5 text-gray-600" /></button>
           <button onClick={() => setPage('add-review')}
             className="flex items-center gap-2 px-4 py-2 rounded-xl text-white text-sm font-medium shadow" style={{ background: grad }}>
@@ -866,12 +866,12 @@ function DashboardPage({ setPage }) {
       <div className="flex items-center justify-between mb-8">
         <h2 className="text-3xl font-bold text-gray-800">Hospital Dashboard</h2>
         <div className="flex items-center gap-4">
-          <div className="relative">
+          {/* <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
             <input type="text" placeholder="Search..." className="pl-10 pr-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 w-64" />
-          </div>
-          <button className="p-2 hover:bg-gray-100 rounded-xl"><Bell className="w-6 h-6 text-gray-600" /></button>
-          <div className="w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold" style={{ background: gradCard }}>DR</div>
+          </div> */}
+          {/* <button className="p-2 hover:bg-gray-100 rounded-xl"><Bell className="w-6 h-6 text-gray-600" /></button>
+          <div className="w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold" style={{ background: gradCard }}>DR</div> */}
         </div>
       </div>
 

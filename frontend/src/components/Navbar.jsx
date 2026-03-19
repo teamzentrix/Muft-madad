@@ -56,25 +56,25 @@ const Navbar = () => {
         <header className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200 px-3 sm:px-6 py-1.5 sm:py-2.5 shadow-sm">
             <div className="max-w-7xl mx-auto flex items-center justify-between gap-2 min-w-0">
                 {/* Logo */}
-                <div className="flex items-center shrink-0">
-                    <Link href='/'>
-                        <img
-                            src="/logo.jpeg"
-                            alt="Muft Madad Logo"
-                            className="h-9 sm:h-11 md:h-12 w-auto object-contain"
-                            onError={(e) => {
-                                e.target.style.display = 'none';
-                                e.target.nextSibling.style.display = 'flex';
-                            }}
-                        />
-                    </Link>
-                    <div
-                        className="hidden items-center justify-center bg-teal-600 text-white font-bold text-lg sm:text-xl px-3 py-1 rounded"
-                        style={{ display: 'none' }}
-                    >
-                        {lang === 'en' ? 'Muft Madad' : 'मुफ्त मदद'}
-                    </div>
-                </div>
+<div className="flex items-center shrink-0">
+    <Link href='/'>
+        <img
+            src="/logo.png"
+            alt="Muft Madad Logo"
+            className="h-9 sm:h-11 md:h-12 w-12 object-contain scale-125 md:scale-195"
+            onError={(e) => {
+                e.target.style.display = 'none';
+                e.target.nextSibling.style.display = 'flex';
+            }}
+        />
+    </Link>
+    <div
+        className="hidden items-center justify-center bg-teal-600 text-white font-bold text-lg sm:text-xl px-3 py-1 rounded"
+        style={{ display: 'none' }}
+    >
+        {lang === 'en' ? 'Muft Madad' : 'मुफ्त मदद'}
+    </div>
+</div>
 
                 {/* Right side buttons */}
                 <div className="flex items-center gap-1.5 sm:gap-2.5 md:gap-3 shrink-0 min-w-0">
