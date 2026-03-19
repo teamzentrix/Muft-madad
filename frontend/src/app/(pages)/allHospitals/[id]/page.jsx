@@ -710,10 +710,10 @@ export default function HospitalDetailPage() {
       <div className="max-w-5xl mx-auto px-4 pt-24 pb-20">
         {/* Back */}
         <Link
-          href="/allHospitals"
+          href="/"
           className="inline-flex items-center gap-1.5 text-sm text-gray-400 hover:text-gray-700 mb-6 transition-colors"
         >
-          <ChevronLeft className="w-4 h-4" /> All Hospitals
+          <ChevronLeft className="w-4 h-4" /> Back
         </Link>
 
         {/* Hero Card */}
