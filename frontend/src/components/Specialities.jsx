@@ -59,25 +59,26 @@ export default function OurSpecialities() {
           </p>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
-          {specialities.map((speciality) => (
-            <div
-              key={speciality.id}
-              className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300"
-            >
-              {/* Image */}
-              <div className="w-full h-28 sm:h-32 overflow-hidden">
-                <img
-                  src={speciality.image}
-                  alt={lang === 'en' ? speciality.name_en : speciality.name_hi}
-                  className="w-full h-full object-cover"
-                />
-              </div>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 items-stretch">
+  {specialities.map((speciality) => (
+    <div
+      key={speciality.id}
+      className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300 flex flex-col"
+    >
+      {/* Image */}
+      <div className="w-full h-28 sm:h-32 overflow-hidden shrink-0">
+        <img
+          src={speciality.image}
+          alt={lang === 'en' ? speciality.name_en : speciality.name_hi}
+          className="w-full h-full object-cover"
+        />
+      </div>
 
               {/* Content */}
-              <div className="p-3">
+              <div className="p-3 flex flex-col flex-1">
+
                 {/* Title - centered and bold */}
-                <h3 className="text-sm sm:text-base font-bold text-gray-900 text-center mb-1.5">
+                <h3 className="text-sm sm:text-base font-bold text-gray-900 text-left mb-1.5">
                   {lang === 'en' ? speciality.name_en : speciality.name_hi}
                 </h3>
 
@@ -88,9 +89,9 @@ export default function OurSpecialities() {
 
                 {/* Know more link */}
                 <button
-                  onClick={() => handleSpecialityClick(speciality)}
-                  className="text-xs text-blue-600 hover:text-blue-800 underline font-medium cursor-pointer bg-transparent border-none p-0"
-                >
+  onClick={() => handleSpecialityClick(speciality)}
+  className="text-xs text-blue-600 text-left hover:text-blue-800 underline font-medium cursor-pointer bg-transparent border-none p-0 mt-auto"
+>
                   {lang === 'en' ? 'know more➜' : 'विस्तार से जानें'}
                 </button>
               </div>
