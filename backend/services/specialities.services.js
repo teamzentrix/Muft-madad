@@ -15,6 +15,7 @@ const createSpecialityService = async (data) => {
         [uuidv4(), name_en, name_hi, slug, image || null, description_en || null, description_hi || null, is_active]
     );
     return { success: true, data: result.rows[0] };
+    
 };
 
 const getAllSpecialitiesService = async () => {
