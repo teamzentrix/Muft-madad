@@ -249,27 +249,48 @@ const DoctorsTab = ({ doctors, loading }) => {
 /* ══════════════════════════════════════════════════════
    TAB: SPECIALITIES — from hospital.available_specialities
 ══════════════════════════════════════════════════════ */
-const SpecialitiesTab = ({ items }) => (
-  <div>
-    <SectionHeading>
-      Specialities <PillBadge color="purple">{items?.length || 0}</PillBadge>
-    </SectionHeading>
-    {items?.length > 0 ? (
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-        {items.map((item, i) => (
-          <div key={i} className="flex items-center gap-3 p-3.5 bg-purple-50 border border-purple-100 rounded-xl hover:border-purple-200 transition-colors">
-            <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center shrink-0">
-              <Stethoscope className="w-4 h-4 text-purple-600" />
+const SpecialitiesTab = ({ items }) => {
+  const router = useRouter(); // import useRouter from 'next/navigation'
+
+  return (
+    <div>
+      <SectionHeading>
+        Specialities <PillBadge color="purple">{items?.length || 0}</PillBadge>
+      </SectionHeading>
+      {items?.length > 0 ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          {items.map((item, i) => (
+            <div
+              key={i}
+              onClick={() => {
+                if (item.id) {
+                  router.push(`/allSpecialities/${item.id}`);
+                } else {
+                  alert('This Speciality will be added after some time');
+                }
+              }}
+              className="flex items-center gap-3 p-3.5 bg-purple-50 border border-purple-100 rounded-xl hover:border-purple-300 hover:bg-purple-100 transition-colors cursor-pointer"
+            >
+              <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center shrink-0">
+                <Stethoscope className="w-4 h-4 text-purple-600" />
+              </div>
+              <span className="text-sm text-gray-700 font-medium flex-1">
+                {item.name || item}
+              </span>
+              {!item.id && (
+                <span className="text-[10px] text-orange-400 bg-orange-50 border border-orange-100 px-2 py-0.5 rounded-full shrink-0">
+                  Coming Soon
+                </span>
+              )}
             </div>
-            <span className="text-sm text-gray-700 font-medium">{item}</span>
-          </div>
-        ))}
-      </div>
-    ) : (
-      <EmptyState icon={<Stethoscope className="w-8 h-8" />} msg="No specialities listed." />
-    )}
-  </div>
-);
+          ))}
+        </div>
+      ) : (
+        <EmptyState icon={<Stethoscope className="w-8 h-8" />} msg="No specialities listed." />
+      )}
+    </div>
+  );
+};
 
 /* ══════════════════════════════════════════════════════
    TAB: TREATMENTS — from hospital.available_treatments
