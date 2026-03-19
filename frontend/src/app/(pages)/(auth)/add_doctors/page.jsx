@@ -20,6 +20,55 @@ import { v4 as uuidv4 } from 'uuid';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 
+const ImageUploadField = ({ label, value, onChange, placeholder = "https://..." }) => {
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onloadend = () => onChange(reader.result);
+    reader.readAsDataURL(file);
+    e.target.value = '';
+  };
+
+  return (
+    <div>
+      <label className="block text-sm font-semibold text-gray-700 mb-2">{label}</label>
+      
+      {/* URL Input */}
+      <input
+        type="text"
+        value={value.startsWith('data:') ? '' : value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+        className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all text-sm mb-2"
+      />
+
+      {/* File Upload */}
+      <label className="flex items-center gap-2 cursor-pointer w-fit px-4 py-2 bg-gray-100 hover:bg-blue-50 border-2 border-dashed border-gray-300 hover:border-blue-400 rounded-lg transition-all text-sm text-gray-600 hover:text-blue-600">
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+        </svg>
+        Upload From Device
+        <input type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
+      </label>
+
+      {/* Preview */}
+      {value && (
+        <div className="mt-2 relative w-24 h-24 rounded-lg overflow-hidden border-2 border-gray-200 group">
+          <img src={value} alt="preview" className="w-full h-full object-cover" />
+          <button
+            type="button"
+            onClick={() => onChange('')}
+            className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center text-white text-xs font-semibold transition-opacity"
+          >
+            ✕ Remove
+          </button>
+        </div>
+      )}
+    </div>
+  );
+};
+
 const AdminDoctorForm = () => {
     const [formData, setFormData] = useState({
         uuid: uuidv4(),
@@ -182,11 +231,11 @@ const AdminDoctorForm = () => {
 
     return (
         <Fragment>
-            <div className="min-h-screen bg-blue-50 py-8 px-4 sm:px-6 lg:px-8 my-14 md:my-22">
+            <div className="min-h-screen bg-blue-50 py-8 px-4 sm:px-6 lg:px-8 ">
                 <Navbar />
                 <div className="max-w-7xl mx-auto">
                     {/* Header */}
-                    <div className="text-center mb-8 bg-white rounded-xl shadow-md p-8 border-t-4 border-blue-500">
+                    <div className="text-center bg-white rounded-xl shadow-md p-8 border-t-4 border-blue-500">
                         <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-4">
                             <User className="w-8 h-8 text-blue-600" />
                         </div>
@@ -306,18 +355,14 @@ const AdminDoctorForm = () => {
                                         />
                                     </div>
 
-                                    <div>
-                                        <label className="block text-sm font-semibold text-gray-700 mb-2">Photo URL</label>
-                                        <input
-                                            type="text"
-                                            name="photo"
-                                            value={formData.photo}
-                                            onChange={handleChange}
-                                            maxLength={500}
-                                            className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
-                                            placeholder="Profile Picture URL"
-                                        />
-                                    </div>
+                                   <div className="md:col-span-2">
+  <ImageUploadField
+    label="Photo"
+    value={formData.photo}
+    onChange={(val) => setFormData(prev => ({ ...prev, photo: val }))}
+    placeholder="https://example.com/doctor-photo.jpg"
+  />
+</div>
                                 </div>
                             </div>
                         )}

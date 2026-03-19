@@ -116,7 +116,7 @@ const ReviewForm = () => {
             <Navbar />
 
             {/* Header */}
-            <div className="max-w-4xl mx-auto mb-12 text-center md:pt-22 pt-14 px-4">
+            <div className="max-w-4xl mx-auto mb-12 text-center px-4">
                 <div className="inline-flex items-center gap-2 bg-orange-100 px-4 py-2 rounded-full mb-6">
                     <Heart className="w-5 h-5 text-orange-600" />
                     <span className="text-orange-700 font-semibold">Share Your Experience</span>
