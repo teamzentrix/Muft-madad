@@ -5,6 +5,7 @@ import Navbar from '@/components/Navbar'
 import OurSpecialities from '@/components/Specialities'
 import PatientTestimonials from '@/components/Testimonials'
 import MedicalTreatmentsPage from '@/components/Treatments'
+// import ImageBanner from '@/components/ImageBanner'
 import WhyChooseMuftMadad from '@/components/Whychoose'
 import React, { Fragment } from 'react'
 
@@ -17,6 +18,7 @@ const page = () => {
       <OurSpecialities />
       <WhyChooseMuftMadad />
       <PatientTestimonials />
+      {/* <ImageBanner /> */}
       <HospitalsSection />
       <Footer />
     </Fragment>
