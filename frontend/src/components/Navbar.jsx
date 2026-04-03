@@ -7,7 +7,7 @@ import Link from 'next/link';
 
 const Navbar = () => {
     const [isCityDropdownOpen, setIsCityDropdownOpen] = React.useState(false);
-    const [isLangDropdownOpen, setIsLangDropdownOpen] = React.useState(false);
+    // const [isLangDropdownOpen, setIsLangDropdownOpen] = React.useState(false);
     const [selectedCity, setSelectedCity] = React.useState('शहर चुनें');
     const dropdownRef = React.useRef(null);
     const langDropdownRef = React.useRef(null);
@@ -22,10 +22,10 @@ const Navbar = () => {
         router.push(`/cities/${encodeURIComponent(city)}`);
     };
 
-    const handleLangSelect = (newLang) => {
-        toggleLang();
-        setIsLangDropdownOpen(false);
-    };
+    // const handleLangSelect = (newLang) => {
+    //     toggleLang();
+    //     setIsLangDropdownOpen(false);
+    // };
 
     const getCityDisplayName = () => {
         const cityMap = {
@@ -42,9 +42,9 @@ const Navbar = () => {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
                 setIsCityDropdownOpen(false);
             }
-            if (langDropdownRef.current && !langDropdownRef.current.contains(event.target)) {
-                setIsLangDropdownOpen(false);
-            }
+            // if (langDropdownRef.current && !langDropdownRef.current.contains(event.target)) {
+            //     setIsLangDropdownOpen(false);
+            // }
         };
         document.addEventListener('mousedown', handleClickOutside);
         return () => document.removeEventListener('mousedown', handleClickOutside);
@@ -80,7 +80,7 @@ const Navbar = () => {
                 <div className="flex items-center gap-1.5 sm:gap-2.5 md:gap-3 shrink-0 min-w-0">
                     {/* Language Selector */}
                     <div className="relative" ref={langDropdownRef}>
-                        <button
+                        {/* <button
                             onClick={() => setIsLangDropdownOpen(!isLangDropdownOpen)}
                             className="flex items-center gap-1 px-2 py-1 border border-green-500 text-green-600 rounded hover:bg-green-50 transition text-xs sm:text-sm"
                         >
@@ -97,9 +97,9 @@ const Navbar = () => {
                                     <ChevronDown className="w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0" />
                                 </>
                             )}
-                        </button>
+                        </button> */}
 
-                        {isLangDropdownOpen && (
+                        {/* {isLangDropdownOpen && (
                             <div className="absolute right-0 mt-1.5 w-28 bg-white border border-gray-200 rounded-lg shadow-lg z-50 overflow-hidden">
                                 <button
                                     onClick={() => handleLangSelect('hi')}
@@ -114,7 +114,7 @@ const Navbar = () => {
                                     English
                                 </button>
                             </div>
-                        )}
+                        )} */}
                     </div>
 
                     {/* Call Button */}

@@ -133,6 +133,95 @@ const injectStyles = () => {
             animation: dpl-skeleton-wave 1.6s infinite;
             border-radius: 6px;
         }
+
+        /* ── Responsive: Mobile ── */
+        @media (max-width: 640px) {
+            .dpl-main-card {
+                grid-template-columns: 1fr !important;
+            }
+            .dpl-photo-panel {
+                padding: 32px 20px 24px !important;
+                border-radius: 0 !important;
+            }
+            .dpl-avatar-size {
+                width: 130px !important;
+                height: 130px !important;
+            }
+            .dpl-spin-ring-wrap {
+                inset: -8px !important;
+            }
+            .dpl-info-panel {
+                padding: 24px 20px 28px !important;
+            }
+            .dpl-bottom-bar {
+                flex-direction: column !important;
+                align-items: flex-start !important;
+                padding: 18px 20px !important;
+                gap: 14px !important;
+            }
+            .dpl-bottom-bar-contacts {
+                width: 100% !important;
+                flex-direction: column !important;
+            }
+            .dpl-bottom-bar-contacts a,
+            .dpl-bottom-bar-contacts div {
+                width: 100% !important;
+                justify-content: center !important;
+                box-sizing: border-box !important;
+            }
+            .dpl-sections-grid {
+                grid-template-columns: 1fr !important;
+            }
+            .dpl-stats-row {
+                flex-direction: row !important;
+                flex-wrap: wrap !important;
+                gap: 8px !important;
+            }
+            .dpl-stat {
+                flex: 1 1 calc(50% - 4px) !important;
+                min-width: 0 !important;
+            }
+            .dpl-name-serif-lg {
+                font-size: 20px !important;
+            }
+            .dpl-name-serif-md {
+                font-size: 16px !important;
+            }
+            .dpl-hero-name {
+                font-size: 22px !important;
+            }
+            .dpl-hero-sub {
+                font-size: 18px !important;
+            }
+            .dpl-section-page {
+                padding-top: 80px !important;
+                padding-left: 12px !important;
+                padding-right: 12px !important;
+            }
+        }
+
+        /* ── Responsive: Tablet ── */
+        @media (min-width: 641px) and (max-width: 860px) {
+            .dpl-main-card {
+                grid-template-columns: 240px 1fr !important;
+            }
+            .dpl-photo-panel {
+                padding: 32px 20px !important;
+            }
+            .dpl-avatar-size {
+                width: 140px !important;
+                height: 140px !important;
+            }
+            .dpl-info-panel {
+                padding: 28px 24px !important;
+            }
+            .dpl-bottom-bar-contacts {
+                flex-wrap: wrap !important;
+            }
+            .dpl-sections-grid {
+                grid-template-columns: 1fr !important;
+            }
+        }
     `;
     document.head.appendChild(s);
 };
@@ -142,13 +231,13 @@ const SkeletonProfile = () => {
     useEffect(() => { injectStyles(); }, []);
     return (
         <div className="dpl-root" style={{ maxWidth: 900, margin: '0 auto' }}>
-            <div style={{ background: '#fff', borderRadius: 24, overflow: 'hidden', boxShadow: '0 8px 48px rgba(0,0,0,0.09)', display: 'flex', minHeight: 380 }}>
+            <div style={{ background: '#fff', borderRadius: 24, overflow: 'hidden', boxShadow: '0 8px 48px rgba(0,0,0,0.09)', display: 'flex', flexWrap: 'wrap', minHeight: 380 }}>
                 {/* Left */}
-                <div style={{ width: 300, background: '#eef5fb', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 32 }}>
-                    <div className="dpl-skel" style={{ width: 200, height: 200, borderRadius: '50%' }} />
+                <div style={{ width: '100%', maxWidth: 300, background: '#eef5fb', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 32 }}>
+                    <div className="dpl-skel" style={{ width: 160, height: 160, borderRadius: '50%' }} />
                 </div>
                 {/* Right */}
-                <div style={{ flex: 1, padding: '40px 36px', display: 'flex', flexDirection: 'column', gap: 14 }}>
+                <div style={{ flex: 1, minWidth: 260, padding: '40px 36px', display: 'flex', flexDirection: 'column', gap: 14 }}>
                     <div className="dpl-skel" style={{ height: 12, width: 80 }} />
                     <div className="dpl-skel" style={{ height: 28, width: 220 }} />
                     <div className="dpl-skel" style={{ height: 16, width: 180 }} />
@@ -161,7 +250,7 @@ const SkeletonProfile = () => {
                             </div>
                         ))}
                     </div>
-                    <div style={{ marginTop: 16, display: 'flex', gap: 8 }}>
+                    <div style={{ marginTop: 16, display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                         {[70, 60, 80, 68].map((w, i) => (
                             <div key={i} className="dpl-skel" style={{ height: 28, width: w, borderRadius: 100 }} />
                         ))}
@@ -169,7 +258,7 @@ const SkeletonProfile = () => {
                 </div>
             </div>
             {/* Bottom bar skeleton */}
-            <div style={{ marginTop: 3, background: '#fff', borderRadius: '0 0 24px 24px', padding: '24px 36px', display: 'flex', gap: 24, boxShadow: '0 8px 32px rgba(0,0,0,0.07)' }}>
+            <div style={{ marginTop: 3, background: '#fff', borderRadius: '0 0 24px 24px', padding: '24px 36px', display: 'flex', gap: 24, flexWrap: 'wrap', boxShadow: '0 8px 32px rgba(0,0,0,0.07)' }}>
                 {[200, 140, 180].map((w, i) => (
                     <div key={i} className="dpl-skel" style={{ height: 18, width: w }} />
                 ))}
@@ -224,7 +313,7 @@ const DoctorProfile = ({ doctor }) => {
         <div className="dpl-root" style={{ maxWidth: 920, margin: '0 auto' }}>
 
             {/* ── MAIN CARD (split: photo left + info right) ── */}
-            <div style={{
+            <div className="dpl-main-card" style={{
                 background: '#fff',
                 borderRadius: 24,
                 overflow: 'hidden',
@@ -235,7 +324,7 @@ const DoctorProfile = ({ doctor }) => {
 
                 {/* ──── LEFT: Photo Panel ──── */}
                 <div className="dpl-photo-panel" style={{
-                    background: 'linear-linear(160deg, #daeeff 0%, #c5dfff 60%, #b8d4f8 100%)',
+                    background: 'linear-gradient(160deg, #daeeff 0%, #c5dfff 60%, #b8d4f8 100%)',
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
@@ -261,19 +350,19 @@ const DoctorProfile = ({ doctor }) => {
                     {/* Avatar */}
                     <div className="dpl-avatar-wrap" style={{ position: 'relative', marginBottom: 22 }}>
                         {/* Spinning dashed ring */}
-                        <div className="dpl-spin-ring" style={{
+                        <div className="dpl-spin-ring dpl-spin-ring-wrap" style={{
                             position: 'absolute', inset: -10,
                             borderRadius: '50%',
                             border: '2px dashed rgba(29,111,196,0.35)',
                         }} />
                         {/* Photo circle */}
-                        <div style={{
+                        <div className="dpl-avatar-size" style={{
                             width: 170, height: 170,
                             borderRadius: '50%',
                             overflow: 'hidden',
                             border: '4px solid #fff',
                             boxShadow: '0 12px 40px rgba(14,100,200,0.22)',
-                            background: 'linear-linear(135deg, #93c5fd, #3b82f6)',
+                            background: 'linear-gradient(135deg, #93c5fd, #3b82f6)',
                             position: 'relative',
                             zIndex: 1,
                         }}>
@@ -287,9 +376,9 @@ const DoctorProfile = ({ doctor }) => {
                         </div>
                     </div>
 
-                    {/* Name under photo (like the reference) */}
+                    {/* Name under photo */}
                     <div className="dpl-float" style={{ textAlign: 'center' }}>
-                        <p className="dpl-serif" style={{
+                        <p className="dpl-serif dpl-name-serif-lg" style={{
                             fontSize: 26,
                             fontWeight: 800,
                             color: '#0c2a52',
@@ -299,7 +388,7 @@ const DoctorProfile = ({ doctor }) => {
                         }}>
                             {doctor.name?.split(' ').slice(0, -1).join(' ') || doctor.name}
                         </p>
-                        <p className="dpl-serif" style={{
+                        <p className="dpl-serif dpl-name-serif-md" style={{
                             fontSize: 20,
                             fontWeight: 700,
                             color: '#1d6fc4',
@@ -320,8 +409,8 @@ const DoctorProfile = ({ doctor }) => {
                         )}
                     </div>
 
-                    {/* Stats pills at bottom of photo panel */}
-                    <div style={{ marginTop: 22, display: 'flex', flexDirection: 'column', gap: 8, width: '100%' }}>
+                    {/* Stats pills */}
+                    <div className="dpl-stats-row" style={{ marginTop: 22, display: 'flex', flexDirection: 'column', gap: 8, width: '100%' }}>
                         {doctor.average_rating > 0 && (
                             <div className="dpl-stat" style={{
                                 background: 'rgba(255,255,255,0.7)',
@@ -399,7 +488,7 @@ const DoctorProfile = ({ doctor }) => {
                     </p>
 
                     {/* Doctor name */}
-                    <h1 className="dpl-serif" style={{
+                    <h1 className="dpl-serif dpl-hero-name" style={{
                         fontSize: 26, fontWeight: 700, color: blue,
                         marginBottom: 4, lineHeight: 1.15, letterSpacing: '-0.01em',
                     }}>
@@ -423,7 +512,7 @@ const DoctorProfile = ({ doctor }) => {
                     {/* Divider */}
                     <div style={{ height: 1, background: '#e8f0fa', margin: '4px 0 18px' }} />
 
-                    {/* Key info rows (like the reference: Experience / Languages / Types) */}
+                    {/* Key info rows */}
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 20 }}>
                         {doctor.experience_in_years && (
                             <div style={{ display: 'grid', gridTemplateColumns: '110px 1fr', alignItems: 'center', gap: 8 }}>
@@ -495,7 +584,7 @@ const DoctorProfile = ({ doctor }) => {
                 </div>
             </div>
 
-            {/* ── BOTTOM BAR (like reference: name + hospital + contact) ── */}
+            {/* ── BOTTOM BAR ── */}
             <div className="dpl-bottom-bar" style={{
                 background: '#fff',
                 borderRadius: '0 0 24px 24px',
@@ -528,7 +617,7 @@ const DoctorProfile = ({ doctor }) => {
                 </div>
 
                 {/* Right: contact buttons */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+                <div className="dpl-bottom-bar-contacts" style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
                     {doctor.phone && (
                         <a href={`tel:${doctor.phone}`} className="dpl-contact-btn dpl-phone-btn" style={{
                             display: 'flex', alignItems: 'center', gap: 8,
@@ -577,7 +666,7 @@ const DoctorProfile = ({ doctor }) => {
                 (Array.isArray(doctor.awards_and_recognitions) && doctor.awards_and_recognitions.length > 0) ||
                 (Array.isArray(doctor.publications) && doctor.publications.length > 0)
             ) && (
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 16, marginTop: 20 }}>
+                <div className="dpl-sections-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 16, marginTop: 20 }}>
 
                     {Array.isArray(doctor.serving_in_hospitals) && doctor.serving_in_hospitals.length > 0 && (
                         <Section icon={Building2} title="Hospitals" accentColor="#1d6fc4" delay={0.55}>
@@ -679,20 +768,20 @@ export default function DoctorProfilePage() {
     return (
         <div style={{
             minHeight: '100vh',
-            background: 'linear-linear(150deg, #eef6ff 0%, #f5f9ff 50%, #edf3fb 100%)',
+            background: 'linear-gradient(150deg, #eef6ff 0%, #f5f9ff 50%, #edf3fb 100%)',
             position: 'relative',
         }}>
             {/* Subtle background decoration */}
             <div style={{
                 position: 'fixed', top: '5%', right: '3%',
                 width: 420, height: 420,
-                background: 'radial-linear(circle, rgba(29,111,196,0.06) 0%, transparent 70%)',
+                background: 'radial-gradient(circle, rgba(29,111,196,0.06) 0%, transparent 70%)',
                 borderRadius: '50%', pointerEvents: 'none', zIndex: 0,
             }} />
             <div style={{
                 position: 'fixed', bottom: '10%', left: '2%',
                 width: 340, height: 340,
-                background: 'radial-linear(circle, rgba(56,189,248,0.07) 0%, transparent 70%)',
+                background: 'radial-gradient(circle, rgba(56,189,248,0.07) 0%, transparent 70%)',
                 borderRadius: '50%', pointerEvents: 'none', zIndex: 0,
             }} />
 
@@ -726,7 +815,7 @@ export default function DoctorProfilePage() {
             
 
             <section
-                className="dpl-root"
+                className="dpl-root dpl-section-page"
                 style={{ paddingTop: 120, paddingBottom: 80, paddingLeft: 16, paddingRight: 16, position: 'relative', zIndex: 1 }}
             >
                 <div style={{ maxWidth: 1100, margin: '0 auto' }}>
