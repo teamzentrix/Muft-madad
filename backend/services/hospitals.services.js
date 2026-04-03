@@ -272,8 +272,9 @@ const getGalleryImagesService = async (id) => {
     return result.rows[0] || null;
 };
 
+// WITH this:
 const deleteHospitalService = async (id) => {
-    const query = `UPDATE hospitals SET deleted_at = NOW() WHERE id = $1 RETURNING *`;
+    const query = `DELETE FROM hospitals WHERE id = $1 RETURNING *`;
     const result = await pool.query(query, [id]);
     return result.rows[0] || null;
 };

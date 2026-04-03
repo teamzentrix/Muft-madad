@@ -1,10 +1,10 @@
 'use client'
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import {
     MapPin, Briefcase, Award, Building2, GraduationCap,
     User, Phone, Mail, Star, Users, BookOpen, Trophy, AlertCircle,
-    Globe, ChevronRight, MessageCircle
+    Globe, ChevronRight, MessageCircle, ArrowLeft,
 } from 'lucide-react';
 import axios from 'axios';
 import Navbar from '@/components/Navbar';
@@ -647,6 +647,8 @@ export default function DoctorProfilePage() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
 
+    const router = useRouter();
+
     useEffect(() => {
         injectStyles();
         if (!id) { setError('Invalid doctor link.'); setLoading(false); return; }
@@ -694,7 +696,34 @@ export default function DoctorProfilePage() {
                 borderRadius: '50%', pointerEvents: 'none', zIndex: 0,
             }} />
 
+           
+
             <Navbar />
+             <button
+    onClick={() => router.push('/')}
+    style={{
+        position: 'fixed',
+        top: 80,
+        left: 100,
+        zIndex: 1000,
+        display: 'flex',
+        alignItems: 'center',
+        gap: 6,
+        padding: '8px 16px',
+        background: '#fff',
+        border: '1px solid #e2e8f0',
+        borderRadius: 100,
+        fontSize: 13,
+        fontWeight: 600,
+        color: '#1d6fc4',
+        cursor: 'pointer',
+        boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
+    }}
+>
+    <ArrowLeft size={14} />
+    Back
+</button>
+            
 
             <section
                 className="dpl-root"
