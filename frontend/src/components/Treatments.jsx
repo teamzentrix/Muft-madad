@@ -61,13 +61,13 @@ const CountUp = ({ end, duration = 2000, suffix = '' }) => {
 
 const TreatmentItem = ({ icon, label, onClick }) => (
   <div
-    className="flex flex-row items-center gap-4 p-4 cursor-pointer bg-white border border-gray-200 rounded-xl transition hover:shadow-md hover:border-gray-300"
+    className="flex flex-col items-center gap-2 p-2 cursor-pointer bg-white border border-gray-200 rounded-xl transition hover:shadow-md hover:border-gray-300"
     onClick={onClick}
   >
-    <div className="w-14 h-14 flex-shrink-0 flex items-center justify-center bg-gray-100 rounded-lg p-2">
+    <div className="w-10 h-10 flex-shrink-0 flex items-center justify-center bg-gray-100 rounded-lg p-1.5">
       <img src={icon} alt={label} className="w-full h-full object-contain" />
     </div>
-    <p className="text-sm sm:text-base font-medium text-gray-800 leading-tight">{label}</p>
+    <p className="text-[11px] font-medium text-gray-800 leading-tight text-center break-words w-full">{label}</p>
   </div>
 );
 
@@ -167,7 +167,7 @@ function MedicalTreatmentsContent() {
 
         {/* Treatments Grid */}
         {!loading && !error && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-5 mb-10">
+          <div className="grid grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-5 mb-10">
             {treatments.map((treatment, index) => (
               <TreatmentItem
                 key={index}

@@ -36,7 +36,7 @@ app.use(cookieParser());
 // 3. Rate limiting - only on actual auth (login/register)
 const authLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
-    max: 10,
+    max: 20,
     message: { message: "Too many requests, please try again later." }
 });
 
